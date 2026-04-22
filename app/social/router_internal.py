@@ -51,9 +51,9 @@ def run_autopost(request: Request):
         cur.execute("SELECT * FROM social_settings WHERE id = 1")
         settings = cur.fetchone()
 
-        media_instagram = get_active_media_for_platform("instagram")
-        media_tiktok = get_active_media_for_platform("tiktok")
-        media_facebook = get_active_media_for_platform("facebook")
+        media_instagram = get_active_media_for_platform("instagram", conn=conn)
+        media_tiktok = get_active_media_for_platform("tiktok", conn=conn)
+        media_facebook = get_active_media_for_platform("facebook", conn=conn)
 
         publishers = []
 
@@ -101,7 +101,7 @@ def run_autopost(request: Request):
             ))
 
             if media and result["status"] == "success":
-                mark_media_used(media["id"])
+                mark_media_used(media["id"], conn=conn)
 
         final_status = "success"
         if any(r["status"] == "failed" for r in results):
