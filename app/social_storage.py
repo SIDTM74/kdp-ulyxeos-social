@@ -35,7 +35,10 @@ def get_active_media_for_platform(platform: str) -> Optional[dict]:
         FROM social_media
         WHERE is_active = 1
           AND (platform_hint = 'all' OR platform_hint = ?)
-        ORDER BY usage_count ASC, last_used_at ASC NULLS FIRST, RANDOM()
+        ORDER BY usage_count ASC,
+                 CASE WHEN last_used_at IS NULL THEN 0 ELSE 1 END,
+                 last_used_at ASC,
+                 RANDOM()
         LIMIT 1
     """, (platform,))
     row = cur.fetchone()
