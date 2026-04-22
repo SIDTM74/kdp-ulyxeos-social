@@ -1,5 +1,6 @@
 import os
 import shutil
+import sqlite3
 from typing import Optional
 from app.db import get_db
 from app.utils import now_iso
@@ -27,8 +28,12 @@ def create_media_record(filename: str, filepath: str, media_type: str, platform_
     conn.close()
 
 
-def get_active_media_for_platform(platform: str) -> Optional[dict]:
-    conn = get_db()
+def get_active_media_for_platform(platform: str, conn: Optional[sqlite3.Connection] = None) -> Optional[dict]:
+    own_conn = False
+    if conn is None:
+        conn = get_db()
+        own_conn = True
+
     cur = conn.cursor()
     cur.execute("""
         SELECT *
@@ -42,12 +47,19 @@ def get_active_media_for_platform(platform: str) -> Optional[dict]:
         LIMIT 1
     """, (platform,))
     row = cur.fetchone()
-    conn.close()
+
+    if own_conn:
+        conn.close()
+
     return dict(row) if row else None
 
 
-def mark_media_used(media_id: int) -> None:
-    conn = get_db()
+def mark_media_used(media_id: int, conn: Optional[sqlite3.Connection] = None) -> None:
+    own_conn = False
+    if conn is None:
+        conn = get_db()
+        own_conn = True
+
     cur = conn.cursor()
     cur.execute("""
         UPDATE social_media
@@ -55,5 +67,7 @@ def mark_media_used(media_id: int) -> None:
             last_used_at = ?
         WHERE id = ?
     """, (now_iso(), media_id))
-    conn.commit()
-    conn.close()
+
+    if own_conn:
+        conn.commit()
+        conn.close()
