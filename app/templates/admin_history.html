@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Historique</title>
+</head>
+<body>
+  <h1>Historique des posts</h1>
+  <ul>
+    {% for row in rows %}
+      <li>{{ row["created_at"] }} - {{ row["status"] }} - {{ row["content_text"] }}</li>
+    {% endfor %}
+  </ul>
+</body>
+</html>

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Social</title>
+</head>
+<body>
+  <h1>Admin Social - KDP ULYXEOS</h1>
+
+  <p>Posts par jour : {{ settings["posts_per_day"] }}</p>
+  <p>Facebook : {{ settings["facebook_enabled"] }}</p>
+  <p>Instagram : {{ settings["instagram_enabled"] }}</p>
+  <p>TikTok : {{ settings["tiktok_enabled"] }}</p>
+
+  <p><a href="/admin/social/media">Gérer les médias</a></p>
+  <p><a href="/admin/social/history">Historique</a></p>
+
+  <h2>Derniers posts</h2>
+  <ul>
+    {% for post in posts %}
+      <li>{{ post["created_at"] }} - {{ post["status"] }} - {{ post["content_text"] }}</li>
+    {% endfor %}
+  </ul>
+</body>
+</html>
