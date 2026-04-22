@@ -1,3 +1,4 @@
+import os
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from app.db import init_db
@@ -6,7 +7,8 @@ from app.social.router_internal import router as internal_router
 
 app = FastAPI(title="KDP ULYXEOS Social Admin")
 
-app.mount("/static", StaticFiles(directory="app/static"), name="static")
+if os.path.isdir("app/static"):
+    app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 app.include_router(admin_social_router)
 app.include_router(internal_router)
