@@ -11,8 +11,17 @@ def ensure_directories() -> None:
 
 
 def get_db() -> sqlite3.Connection:
-    conn = sqlite3.connect(SOCIAL_DB_PATH)
+    conn = sqlite3.connect(
+        SOCIAL_DB_PATH,
+        timeout=30,
+        check_same_thread=False
+    )
     conn.row_factory = sqlite3.Row
+
+    conn.execute("PRAGMA journal_mode=WAL;")
+    conn.execute("PRAGMA synchronous=NORMAL;")
+    conn.execute("PRAGMA busy_timeout=30000;")
+
     return conn
 
 
