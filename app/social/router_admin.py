@@ -15,7 +15,11 @@ router = APIRouter(tags=["admin-social"])
 
 @router.get("/admin/login", response_class=HTMLResponse)
 def admin_login_page(request: Request):
-    return templates.TemplateResponse("admin_login.html", {"request": request})
+    return templates.TemplateResponse(
+        request,
+        "admin_login.html",
+        {}
+    )
 
 
 @router.post("/admin/login")
@@ -24,7 +28,12 @@ def admin_login(request: Request, email: str = Form(...), password: str = Form(.
         return RedirectResponse("/admin/login", status_code=303)
 
     response = RedirectResponse("/admin/social", status_code=303)
-    response.set_cookie("admin_session", create_session_token(email), httponly=True, samesite="lax")
+    response.set_cookie(
+        "admin_session",
+        create_session_token(email),
+        httponly=True,
+        samesite="lax"
+    )
     return response
 
 
@@ -44,11 +53,14 @@ def admin_social_dashboard(request: Request):
 
     conn.close()
 
-    return templates.TemplateResponse("admin_social.html", {
-        "request": request,
-        "settings": settings,
-        "posts": posts
-    })
+    return templates.TemplateResponse(
+        request,
+        "admin_social.html",
+        {
+            "settings": settings,
+            "posts": posts
+        }
+    )
 
 
 @router.get("/admin/social/media", response_class=HTMLResponse)
@@ -62,10 +74,13 @@ def admin_media_page(request: Request):
     media_items = cur.fetchall()
     conn.close()
 
-    return templates.TemplateResponse("admin_media.html", {
-        "request": request,
-        "media_items": media_items
-    })
+    return templates.TemplateResponse(
+        request,
+        "admin_media.html",
+        {
+            "media_items": media_items
+        }
+    )
 
 
 @router.post("/admin/social/media/upload")
@@ -105,7 +120,10 @@ def admin_history_page(request: Request):
     rows = cur.fetchall()
     conn.close()
 
-    return templates.TemplateResponse("admin_history.html", {
-        "request": request,
-        "rows": rows
-    })
+    return templates.TemplateResponse(
+        request,
+        "admin_history.html",
+        {
+            "rows": rows
+        }
+    )
