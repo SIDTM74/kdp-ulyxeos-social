@@ -1,5 +1,5 @@
 import json
-from fastapi import APIRouter, Header, HTTPException
+from fastapi import APIRouter, Header, HTTPException, Request
 from app.config import INTERNAL_AUTPOST_SECRET
 from app.db import get_db
 from app.utils import now_iso, save_log
@@ -14,9 +14,21 @@ router = APIRouter(prefix="/internal", tags=["internal"])
 
 
 @router.post("/autopost/run")
-def run_autopost(x_internal_secret: str = Header(default="")):
-    if x_internal_secret != INTERNAL_AUTPOST_SECRET:
-        raise HTTPException(status_code=403, detail="Forbidden")
+def run_autopost(request: Request):
+    received_secret = request.headers.get("x-internal-secret", "").strip()
+    expected_secret = (INTERNAL_AUTPOST_SECRET or "").strip()
+
+    if received_secret != expected_secret:
+        raise HTTPException(
+            status_code=403,
+            detail={
+                "error": "Forbidden",
+                "received_present": bool(received_secret),
+                "received_length": len(received_secret),
+                "expected_present": bool(expected_secret),
+                "expected_length": len(expected_secret),
+            },
+        )
 
     conn = get_db()
     cur = conn.cursor()
