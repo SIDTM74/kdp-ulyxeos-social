@@ -23,19 +23,17 @@ class InstagramPublisher(BasePublisher):
                 "response": {"error": "Instagram requires media"},
             }
 
+        media_url = (media.get("public_url") or "").strip()
+        if not media_url:
+            return {
+                "platform": self.platform_name,
+                "status": "failed",
+                "platform_post_id": None,
+                "response": {"error": "Missing public_url for Instagram media"},
+            }
+
         try:
-            media_url = media.get("public_url")
-            if not media_url:
-                return {
-                    "platform": self.platform_name,
-                    "status": "failed",
-                    "platform_post_id": None,
-                    "response": {"error": "Missing public_url for Instagram media"},
-                }
-
-            # 1. Créer le container
             create_url = f"https://graph.facebook.com/v23.0/{INSTAGRAM_BUSINESS_ACCOUNT_ID}/media"
-
             payload = {
                 "caption": text,
                 "access_token": INSTAGRAM_ACCESS_TOKEN,
@@ -60,7 +58,6 @@ class InstagramPublisher(BasePublisher):
 
             creation_id = create_data["id"]
 
-            # 2. Publier
             publish_url = f"https://graph.facebook.com/v23.0/{INSTAGRAM_BUSINESS_ACCOUNT_ID}/media_publish"
             publish_payload = {
                 "creation_id": creation_id,
