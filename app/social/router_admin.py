@@ -55,7 +55,36 @@ def admin_social_dashboard(request: Request):
     cur.execute("SELECT * FROM social_runs ORDER BY id DESC LIMIT 5")
     runs = cur.fetchall()
 
+    cur.execute("SELECT COUNT(*) AS total_posts FROM social_posts")
+    total_posts = cur.fetchone()["total_posts"]
+
+    cur.execute("SELECT COUNT(*) AS total_runs FROM social_runs")
+    total_runs = cur.fetchone()["total_runs"]
+
+    cur.execute("SELECT COUNT(*) AS success_runs FROM social_runs WHERE status = 'success'")
+    success_runs = cur.fetchone()["success_runs"]
+
+    cur.execute("SELECT COUNT(*) AS failed_runs FROM social_runs WHERE status = 'failed'")
+    failed_runs = cur.fetchone()["failed_runs"]
+
+    cur.execute("SELECT COUNT(*) AS partial_runs FROM social_runs WHERE status = 'partial'")
+    partial_runs = cur.fetchone()["partial_runs"]
+
+    cur.execute("SELECT * FROM social_posts ORDER BY id DESC LIMIT 1")
+    latest_post = cur.fetchone()
+
+    cur.execute("SELECT * FROM social_runs ORDER BY id DESC LIMIT 1")
+    latest_run = cur.fetchone()
+
     conn.close()
+
+    stats = {
+        "total_posts": total_posts,
+        "total_runs": total_runs,
+        "success_runs": success_runs,
+        "failed_runs": failed_runs,
+        "partial_runs": partial_runs,
+    }
 
     return templates.TemplateResponse(
         request,
@@ -63,7 +92,10 @@ def admin_social_dashboard(request: Request):
         {
             "settings": settings,
             "posts": posts,
-            "runs": runs
+            "runs": runs,
+            "stats": stats,
+            "latest_post": latest_post,
+            "latest_run": latest_run,
         }
     )
 
