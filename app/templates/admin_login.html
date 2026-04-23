@@ -1,21 +1,37 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
-    <title>Admin Login</title>
-    <link rel="stylesheet" href="/static/style.css">
+  <meta charset="UTF-8">
+  <title>Connexion Admin | KDP ULYXEOS</title>
+  <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
+  <div class="login-shell">
+    <div class="login-card">
+      <div class="badge">🔐 Zone sécurisée</div>
+      <h1 class="login-title">Admin KDP ULYXEOS</h1>
+      <div class="login-subtitle">
+        Connecte-toi pour gérer l’autopost, les médias, l’historique et le moteur de contenu.
+      </div>
 
-<div class="container">
-    <h1>🔐 Admin KDP ULYXEOS</h1>
+      <form method="post" action="/admin/login">
+        <div>
+          <label for="email">Email admin</label>
+          <input id="email" type="email" name="email" placeholder="admin@exemple.com" required>
+        </div>
 
-    <form method="post">
-        <input type="email" name="email" placeholder="Email" required>
-        <input type="password" name="password" placeholder="Mot de passe" required>
+        <div>
+          <label for="password">Mot de passe</label>
+          <input id="password" type="password" name="password" placeholder="••••••••••••" required>
+        </div>
 
-        <button type="submit">Connexion</button>
-    </form>
-</div>
+        <button type="submit">Se connecter</button>
+      </form>
 
+      <div class="footer-note">
+        Interface privée réservée à l’administration du module social.
+      </div>
+    </div>
+  </div>
 </body>
 </html>
