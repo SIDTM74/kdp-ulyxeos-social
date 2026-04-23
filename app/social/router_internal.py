@@ -10,16 +10,18 @@ from app.mailer import send_social_report_email
 from app.social.publisher_facebook import FacebookPublisher
 from app.social.publisher_instagram import InstagramPublisher
 from app.social.publisher_tiktok import TikTokPublisher
+from app.auth import is_admin_authenticated
 
 router = APIRouter(prefix="/internal", tags=["internal"])
 
 
 @router.post("/autopost/run")
 def run_autopost(request: Request):
-    received_secret = request.headers.get("x-internal-secret", "").strip()
+        received_secret = request.headers.get("x-internal-secret", "").strip()
     expected_secret = (INTERNAL_AUTPOST_SECRET or "").strip()
+    admin_ok = is_admin_authenticated(request)
 
-    if received_secret != expected_secret:
+    if not admin_ok and received_secret != expected_secret:
         raise HTTPException(
             status_code=403,
             detail={
@@ -29,6 +31,7 @@ def run_autopost(request: Request):
                 "expected_present": bool(expected_secret),
                 "expected_length": len(expected_secret),
             },
+        )
         )
 
     conn = None
