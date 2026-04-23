@@ -113,6 +113,27 @@ def admin_post_now(request: Request):
     return RedirectResponse("/admin/social", status_code=303)
 
 
+@router.post("/admin/social/content-mode")
+def update_content_mode(request: Request, content_mode: str = Form(...)):
+    if not is_admin_authenticated(request):
+        return RedirectResponse("/admin/login", status_code=303)
+
+    if content_mode not in ["standard", "viral", "ultra_aggressive"]:
+        return RedirectResponse("/admin/social", status_code=303)
+
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("""
+        UPDATE social_settings
+        SET content_mode = ?, updated_at = datetime('now')
+        WHERE id = 1
+    """, (content_mode,))
+    conn.commit()
+    conn.close()
+
+    return RedirectResponse("/admin/social", status_code=303)
+
+
 @router.get("/admin/social/media", response_class=HTMLResponse)
 def admin_media_page(request: Request):
     if not is_admin_authenticated(request):
