@@ -375,3 +375,18 @@ pre {
     font-size: 15px;
     box-shadow: 0 14px 30px rgba(37,99,235,0.22);
 }
+
+.kpi-value {
+    text-shadow: 0 8px 30px rgba(37,99,235,0.18);
+}
+
+.card .item + .item {
+    margin-top: 10px;
+}
+
+.hero button {
+    min-width: 240px;
+    font-size: 15px;
+    box-shadow: 0 14px 30px rgba(37,99,235,0.22);
+}
+
