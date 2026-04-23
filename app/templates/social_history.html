@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Historique</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="container">
+    <h1>📊 Historique des posts</h1>
+
+    <div class="nav">
+        <a href="/admin/social">Dashboard</a>
+        <a href="/admin/social/media">Médias</a>
+    </div>
+
+    {% for run in runs %}
+    <div class="card">
+        <strong>Run #{{ run.id }}</strong><br>
+        Status :
+        <span class="{{ run.status }}">{{ run.status }}</span><br>
+        Début : {{ run.started_at }}<br>
+        Fin : {{ run.finished_at }}
+    </div>
+    {% endfor %}
+
+</div>
+
+</body>
+</html>
