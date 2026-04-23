@@ -2,33 +2,95 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Médias</title>
+  <title>Médias | KDP ULYXEOS</title>
+  <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-  <h1>Bibliothèque média</h1>
+  <div class="page">
+    <div class="topbar">
+      <div class="brand">
+        <div class="brand-title">Bibliothèque média</div>
+        <div class="brand-subtitle">Images et vidéos utilisées par le moteur d’autopost</div>
+      </div>
+      <div class="badge">🗂 Gestion des ressources</div>
+    </div>
 
-  <form method="post" action="/admin/social/media/upload" enctype="multipart/form-data">
-    <input type="file" name="file" required>
-    <select name="media_type" required>
-      <option value="image">Image</option>
-      <option value="video">Vidéo</option>
-    </select>
-    <select name="platform_hint">
-      <option value="all">Toutes plateformes</option>
-      <option value="facebook">Facebook</option>
-      <option value="instagram">Instagram</option>
-      <option value="tiktok">TikTok</option>
-    </select>
-    <button type="submit">Uploader</button>
-  </form>
+    <div class="nav">
+      <a href="/admin/social">Dashboard</a>
+      <a href="/admin/social/media">Médias</a>
+      <a href="/admin/social/history">Historique</a>
+    </div>
 
-  <h2>Liste</h2>
-  <ul>
-    {% for media in media_items %}
-      <li>
-        {{ media["id"] }} - {{ media["filename"] }} - {{ media["media_type"] }} - {{ media["platform_hint"] }}
-      </li>
-    {% endfor %}
-  </ul>
+    <div class="card">
+      <h2>Ajouter un média</h2>
+      <form method="post" action="/admin/social/media/upload" enctype="multipart/form-data">
+        <div class="upload-grid">
+          <div>
+            <label for="file">Fichier</label>
+            <input id="file" type="file" name="file" required>
+          </div>
+
+          <div>
+            <label for="media_type">Type</label>
+            <select id="media_type" name="media_type" required>
+              <option value="image">Image</option>
+              <option value="video">Vidéo</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="platform_hint">Plateforme</label>
+            <select id="platform_hint" name="platform_hint">
+              <option value="all">Toutes</option>
+              <option value="facebook">Facebook</option>
+              <option value="instagram">Instagram</option>
+              <option value="tiktok">TikTok</option>
+            </select>
+          </div>
+
+          <div>
+            <button type="submit">Uploader</button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <div style="height:18px;"></div>
+
+    <div class="card">
+      <h2>Liste des médias</h2>
+
+      {% if media_items and media_items|length > 0 %}
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Fichier</th>
+                <th>Type</th>
+                <th>Plateforme</th>
+                <th>Utilisations</th>
+                <th>Dernière utilisation</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for media in media_items %}
+                <tr>
+                  <td>{{ media["id"] }}</td>
+                  <td>{{ media["filename"] }}</td>
+                  <td>{{ media["media_type"] }}</td>
+                  <td>{{ media["platform_hint"] }}</td>
+                  <td>{{ media["usage_count"] }}</td>
+                  <td>{{ media["last_used_at"] or "Jamais" }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <div class="muted">Aucun média enregistré pour le moment.</div>
+      {% endif %}
+    </div>
+  </div>
 </body>
 </html>
