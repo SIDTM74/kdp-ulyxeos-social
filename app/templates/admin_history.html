@@ -10,9 +10,9 @@
     <div class="topbar">
       <div class="brand">
         <div class="brand-title">Historique des posts</div>
-        <div class="brand-subtitle">Suivi des contenus générés et de leur statut</div>
+        <div class="brand-subtitle">Détail des publications par plateforme</div>
       </div>
-      <div class="badge">📊 Journal d’activité</div>
+      <div class="badge">📊 Diagnostic API</div>
     </div>
 
     <div class="nav">
@@ -24,16 +24,31 @@
     <div class="card">
       <h2>Posts enregistrés</h2>
 
-      {% if rows and rows|length > 0 %}
+      {% if history_rows and history_rows|length > 0 %}
         <div class="list">
-          {% for row in rows %}
+          {% for item in history_rows %}
             <div class="item">
-              <div class="item-title">Post #{{ row["id"] }}</div>
+              <div class="item-title">Post #{{ item["post"]["id"] }}</div>
               <div class="item-meta">
-                {{ row["created_at"] }} ·
-                <span class="status {{ row['status'] }}">{{ row["status"] }}</span>
+                {{ item["post"]["created_at"] }} ·
+                <span class="status {{ item['post']['status'] }}">{{ item["post"]["status"] }}</span>
               </div>
-              <div class="item-text">{{ row["content_text"] }}</div>
+
+              <div class="item-text">{{ item["post"]["content_text"] }}</div>
+
+              {% if item["targets"] and item["targets"]|length > 0 %}
+                <div style="height:10px;"></div>
+                {% for target in item["targets"] %}
+                  <div class="item" style="background: rgba(255,255,255,0.02);">
+                    <div class="item-title">{{ target["platform"] }}</div>
+                    <div class="item-meta">
+                      {{ target["sent_at"] }} ·
+                      <span class="status {{ target['status'] }}">{{ target["status"] }}</span>
+                    </div>
+                    <pre>{{ target["response_json"] }}</pre>
+                  </div>
+                {% endfor %}
+              {% endif %}
             </div>
           {% endfor %}
         </div>
