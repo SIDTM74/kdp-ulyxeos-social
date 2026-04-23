@@ -124,6 +124,7 @@ def init_db() -> None:
 
     cur.execute("SELECT COUNT(*) AS count FROM social_settings")
     row = cur.fetchone()
+
     if row["count"] == 0:
         cur.execute("""
         INSERT INTO social_settings (
@@ -131,7 +132,19 @@ def init_db() -> None:
             email_notifications_enabled, notification_email, bonus_message_enabled,
             min_sentences, max_sentences, updated_at, content_mode
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'), ?)
-        """, (1, 4, 1, 1, 1, 1, "admin@example.com", 1, 1, 3, "viral"))
+        """, (
+            1,      # id
+            4,      # posts_per_day
+            1,      # facebook_enabled
+            0,      # instagram_enabled
+            0,      # tiktok_enabled
+            1,      # email_notifications_enabled
+            "admin@example.com",
+            1,      # bonus_message_enabled
+            1,      # min_sentences
+            3,      # max_sentences
+            "viral" # content_mode
+        ))
     else:
         cur.execute("""
             UPDATE social_settings
