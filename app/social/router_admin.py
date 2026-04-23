@@ -7,7 +7,11 @@ from app.auth import (
     is_admin_authenticated
 )
 from app.db import get_db
-from app.social_storage import save_uploaded_media, create_media_record
+from app.social_storage import (
+    save_uploaded_media,
+    create_media_record,
+    update_media_public_url,
+)
 from app.social.router_internal import run_autopost
 
 templates = Jinja2Templates(directory="app/templates")
@@ -200,7 +204,8 @@ def upload_media(
     request: Request,
     file: UploadFile = File(...),
     media_type: str = Form(...),
-    platform_hint: str = Form("all")
+    platform_hint: str = Form("all"),
+    public_url: str = Form(""),
 ):
     if not is_admin_authenticated(request):
         return RedirectResponse("/admin/login", status_code=303)
@@ -210,9 +215,23 @@ def upload_media(
         filename=file.filename,
         filepath=filepath,
         media_type=media_type,
-        platform_hint=platform_hint
+        platform_hint=platform_hint,
+        public_url=public_url,
     )
 
+    return RedirectResponse("/admin/social/media", status_code=303)
+
+
+@router.post("/admin/social/media/public-url")
+def save_media_public_url(
+    request: Request,
+    media_id: int = Form(...),
+    public_url: str = Form(...),
+):
+    if not is_admin_authenticated(request):
+        return RedirectResponse("/admin/login", status_code=303)
+
+    update_media_public_url(media_id, public_url)
     return RedirectResponse("/admin/social/media", status_code=303)
 
 
