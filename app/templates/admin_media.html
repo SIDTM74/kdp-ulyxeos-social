@@ -52,6 +52,13 @@
             <button type="submit">Uploader</button>
           </div>
         </div>
+
+        <div style="height:12px;"></div>
+
+        <div>
+          <label for="public_url">URL publique du média (recommandée pour Instagram/TikTok)</label>
+          <input id="public_url" type="url" name="public_url" placeholder="https://...">
+        </div>
       </form>
     </div>
 
@@ -61,31 +68,36 @@
       <h2>Liste des médias</h2>
 
       {% if media_items and media_items|length > 0 %}
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Fichier</th>
-                <th>Type</th>
-                <th>Plateforme</th>
-                <th>Utilisations</th>
-                <th>Dernière utilisation</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for media in media_items %}
-                <tr>
-                  <td>{{ media["id"] }}</td>
-                  <td>{{ media["filename"] }}</td>
-                  <td>{{ media["media_type"] }}</td>
-                  <td>{{ media["platform_hint"] }}</td>
-                  <td>{{ media["usage_count"] }}</td>
-                  <td>{{ media["last_used_at"] or "Jamais" }}</td>
-                </tr>
-              {% endfor %}
-            </tbody>
-          </table>
+        <div class="list">
+          {% for media in media_items %}
+            <div class="item">
+              <div class="item-title">#{{ media["id"] }} · {{ media["filename"] }}</div>
+              <div class="item-meta">
+                Type : {{ media["media_type"] }} ·
+                Plateforme : {{ media["platform_hint"] }} ·
+                Utilisations : {{ media["usage_count"] }}
+              </div>
+
+              <div class="item-meta">
+                Dernière utilisation : {{ media["last_used_at"] or "Jamais" }}
+              </div>
+
+              <div style="height:10px;"></div>
+
+              <form method="post" action="/admin/social/media/public-url">
+                <input type="hidden" name="media_id" value="{{ media['id'] }}">
+                <label>URL publique</label>
+                <input
+                  type="url"
+                  name="public_url"
+                  value="{{ media['public_url'] or '' }}"
+                  placeholder="https://..."
+                >
+                <div style="height:10px;"></div>
+                <button type="submit" class="btn-secondary">💾 Sauvegarder l’URL</button>
+              </form>
+            </div>
+          {% endfor %}
         </div>
       {% else %}
         <div class="muted">Aucun média enregistré pour le moment.</div>
