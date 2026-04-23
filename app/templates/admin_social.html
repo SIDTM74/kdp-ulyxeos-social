@@ -12,7 +12,7 @@
         <div class="brand-title">KDP ULYXEOS Social Admin</div>
         <div class="brand-subtitle">Pilotage de l’autopost, statistiques et contenus récents</div>
       </div>
-      <div class="badge">📈 Dashboard avancé</div>
+      <div class="badge">🔥 Mode contenu avancé</div>
     </div>
 
     <div class="nav">
@@ -24,13 +24,26 @@
     <div class="hero">
       <h1>Centre de contrôle social</h1>
       <p>
-        Surveille les performances du moteur d’autopost, déclenche une publication manuelle
-        et garde un œil sur les derniers contenus générés pour KDP ULYXEOS.
+        Ajuste le ton marketing de tes posts, surveille les performances
+        et déclenche une publication à la demande.
       </p>
 
-      <div style="margin-top: 20px;">
+      <div style="margin-top: 20px; display:grid; gap:14px; max-width: 420px;">
         <form method="post" action="/admin/social/post-now">
           <button type="submit">⚡ Lancer un post maintenant</button>
+        </form>
+
+        <form method="post" action="/admin/social/content-mode">
+          <label for="content_mode" style="display:block; margin-bottom:8px; color:#cbd5e1;">
+            Mode de contenu
+          </label>
+          <select id="content_mode" name="content_mode">
+            <option value="standard" {% if settings["content_mode"] == "standard" %}selected{% endif %}>Standard</option>
+            <option value="viral" {% if settings["content_mode"] == "viral" %}selected{% endif %}>Viral</option>
+            <option value="ultra_aggressive" {% if settings["content_mode"] == "ultra_aggressive" %}selected{% endif %}>Ultra agressif</option>
+          </select>
+          <div style="height:10px;"></div>
+          <button type="submit" class="btn-secondary">💾 Sauvegarder le mode</button>
         </form>
       </div>
     </div>
@@ -47,8 +60,10 @@
       </div>
 
       <div class="card">
-        <div class="kpi-label">Posts / jour</div>
-        <div class="kpi-value">{{ settings["posts_per_day"] }}</div>
+        <div class="kpi-label">Mode actif</div>
+        <div class="kpi-value" style="font-size:22px;">
+          {{ settings["content_mode"] }}
+        </div>
       </div>
     </div>
 
