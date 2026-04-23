@@ -8,6 +8,7 @@ from app.auth import (
 )
 from app.db import get_db
 from app.social_storage import save_uploaded_media, create_media_record
+from app.social.router_internal import run_autopost
 
 templates = Jinja2Templates(directory="app/templates")
 router = APIRouter(tags=["admin-social"])
@@ -51,6 +52,9 @@ def admin_social_dashboard(request: Request):
     cur.execute("SELECT * FROM social_posts ORDER BY id DESC LIMIT 10")
     posts = cur.fetchall()
 
+    cur.execute("SELECT * FROM social_runs ORDER BY id DESC LIMIT 5")
+    runs = cur.fetchall()
+
     conn.close()
 
     return templates.TemplateResponse(
@@ -58,9 +62,23 @@ def admin_social_dashboard(request: Request):
         "admin_social.html",
         {
             "settings": settings,
-            "posts": posts
+            "posts": posts,
+            "runs": runs
         }
     )
+
+
+@router.post("/admin/social/post-now")
+def admin_post_now(request: Request):
+    if not is_admin_authenticated(request):
+        return RedirectResponse("/admin/login", status_code=303)
+
+    try:
+        run_autopost(request)
+    except Exception as exc:
+        print(f"Manual post error: {exc}")
+
+    return RedirectResponse("/admin/social", status_code=303)
 
 
 @router.get("/admin/social/media", response_class=HTMLResponse)
