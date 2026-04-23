@@ -10,9 +10,9 @@
     <div class="topbar">
       <div class="brand">
         <div class="brand-title">KDP ULYXEOS Social Admin</div>
-        <div class="brand-subtitle">Pilotage de l’autopost et de la bibliothèque média</div>
+        <div class="brand-subtitle">Pilotage de l’autopost, statistiques et contenus récents</div>
       </div>
-      <div class="badge">🚀 Module social actif</div>
+      <div class="badge">📈 Dashboard avancé</div>
     </div>
 
     <div class="nav">
@@ -22,10 +22,10 @@
     </div>
 
     <div class="hero">
-      <h1>Tableau de bord</h1>
+      <h1>Centre de contrôle social</h1>
       <p>
-        Lance un post manuellement, surveille les derniers contenus générés
-        et contrôle l’activité du moteur social de KDP ULYXEOS.
+        Surveille les performances du moteur d’autopost, déclenche une publication manuelle
+        et garde un œil sur les derniers contenus générés pour KDP ULYXEOS.
       </p>
 
       <div style="margin-top: 20px;">
@@ -37,22 +37,75 @@
 
     <div class="grid grid-3">
       <div class="card">
-        <div class="kpi-label">Posts par jour</div>
+        <div class="kpi-label">Posts totaux</div>
+        <div class="kpi-value">{{ stats["total_posts"] }}</div>
+      </div>
+
+      <div class="card">
+        <div class="kpi-label">Runs totaux</div>
+        <div class="kpi-value">{{ stats["total_runs"] }}</div>
+      </div>
+
+      <div class="card">
+        <div class="kpi-label">Posts / jour</div>
         <div class="kpi-value">{{ settings["posts_per_day"] }}</div>
       </div>
+    </div>
 
+    <div style="height:18px;"></div>
+
+    <div class="grid grid-3">
       <div class="card">
-        <div class="kpi-label">Facebook</div>
-        <div class="kpi-value">
-          {% if settings["facebook_enabled"] == 1 %}ON{% else %}OFF{% endif %}
-        </div>
+        <div class="kpi-label">Runs réussis</div>
+        <div class="kpi-value">{{ stats["success_runs"] }}</div>
       </div>
 
       <div class="card">
-        <div class="kpi-label">Instagram / TikTok</div>
-        <div class="kpi-value">
-          {% if settings["instagram_enabled"] == 1 or settings["tiktok_enabled"] == 1 %}ON{% else %}OFF{% endif %}
-        </div>
+        <div class="kpi-label">Runs partiels</div>
+        <div class="kpi-value">{{ stats["partial_runs"] }}</div>
+      </div>
+
+      <div class="card">
+        <div class="kpi-label">Runs échoués</div>
+        <div class="kpi-value">{{ stats["failed_runs"] }}</div>
+      </div>
+    </div>
+
+    <div style="height:18px;"></div>
+
+    <div class="grid grid-2">
+      <div class="card">
+        <h2>Dernier post</h2>
+        {% if latest_post %}
+          <div class="item">
+            <div class="item-title">Post #{{ latest_post["id"] }}</div>
+            <div class="item-meta">
+              {{ latest_post["created_at"] }} ·
+              <span class="status {{ latest_post['status'] }}">{{ latest_post["status"] }}</span>
+            </div>
+            <div class="item-text">{{ latest_post["content_text"] }}</div>
+          </div>
+        {% else %}
+          <div class="muted">Aucun post disponible.</div>
+        {% endif %}
+      </div>
+
+      <div class="card">
+        <h2>Dernier run</h2>
+        {% if latest_run %}
+          <div class="item">
+            <div class="item-title">Run #{{ latest_run["id"] }}</div>
+            <div class="item-meta">
+              Début : {{ latest_run["started_at"] }}<br>
+              Fin : {{ latest_run["finished_at"] or "En cours" }}
+            </div>
+            <div>
+              <span class="status {{ latest_run['status'] }}">{{ latest_run["status"] }}</span>
+            </div>
+          </div>
+        {% else %}
+          <div class="muted">Aucun run disponible.</div>
+        {% endif %}
       </div>
     </div>
 
