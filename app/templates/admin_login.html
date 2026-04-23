@@ -1,15 +1,21 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Admin Login</title>
+    <title>Admin Login</title>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-  <h1>Connexion admin</h1>
-  <form method="post" action="/admin/login">
-    <input type="email" name="email" placeholder="Email admin" required>
-    <input type="password" name="password" placeholder="Mot de passe" required>
-    <button type="submit">Se connecter</button>
-  </form>
+
+<div class="container">
+    <h1>🔐 Admin KDP ULYXEOS</h1>
+
+    <form method="post">
+        <input type="email" name="email" placeholder="Email" required>
+        <input type="password" name="password" placeholder="Mot de passe" required>
+
+        <button type="submit">Connexion</button>
+    </form>
+</div>
+
 </body>
 </html>
