@@ -17,11 +17,9 @@ def get_db() -> sqlite3.Connection:
         check_same_thread=False
     )
     conn.row_factory = sqlite3.Row
-
     conn.execute("PRAGMA journal_mode=WAL;")
     conn.execute("PRAGMA synchronous=NORMAL;")
     conn.execute("PRAGMA busy_timeout=30000;")
-
     return conn
 
 
@@ -50,6 +48,13 @@ def init_db() -> None:
         created_at TEXT NOT NULL
     )
     """)
+
+    ensure_column_exists(
+        cur,
+        "social_media",
+        "public_url",
+        "ALTER TABLE social_media ADD COLUMN public_url TEXT DEFAULT ''"
+    )
 
     cur.execute("""
     CREATE TABLE IF NOT EXISTS social_templates (
@@ -133,17 +138,17 @@ def init_db() -> None:
             min_sentences, max_sentences, updated_at, content_mode
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'), ?)
         """, (
-            1,      # id
-            4,      # posts_per_day
-            1,      # facebook_enabled
-            0,      # instagram_enabled
-            0,      # tiktok_enabled
-            1,      # email_notifications_enabled
+            1,
+            4,
+            0,
+            1,
+            0,
+            1,
             "admin@example.com",
-            1,      # bonus_message_enabled
-            1,      # min_sentences
-            3,      # max_sentences
-            "viral" # content_mode
+            1,
+            1,
+            3,
+            "viral"
         ))
     else:
         cur.execute("""
