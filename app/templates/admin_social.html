@@ -24,9 +24,15 @@
     <div class="hero">
       <h1>Tableau de bord</h1>
       <p>
-        Cette interface te permet de suivre la production automatique de posts, l’état des plateformes
-        et les contenus récemment générés pour KDP ULYXEOS.
+        Lance un post manuellement, surveille les derniers contenus générés
+        et contrôle l’activité du moteur social de KDP ULYXEOS.
       </p>
+
+      <div style="margin-top: 20px;">
+        <form method="post" action="/admin/social/post-now">
+          <button type="submit">⚡ Lancer un post maintenant</button>
+        </form>
+      </div>
     </div>
 
     <div class="grid grid-3">
@@ -52,25 +58,50 @@
 
     <div style="height:18px;"></div>
 
-    <div class="card">
-      <h2>Derniers posts générés</h2>
+    <div class="grid grid-2">
+      <div class="card">
+        <h2>Derniers posts générés</h2>
 
-      {% if posts and posts|length > 0 %}
-        <div class="list">
-          {% for post in posts %}
-            <div class="item">
-              <div class="item-title">Post #{{ post["id"] }}</div>
-              <div class="item-meta">
-                {{ post["created_at"] }} ·
-                <span class="status {{ post['status'] }}">{{ post["status"] }}</span>
+        {% if posts and posts|length > 0 %}
+          <div class="list">
+            {% for post in posts %}
+              <div class="item">
+                <div class="item-title">Post #{{ post["id"] }}</div>
+                <div class="item-meta">
+                  {{ post["created_at"] }} ·
+                  <span class="status {{ post['status'] }}">{{ post["status"] }}</span>
+                </div>
+                <div class="item-text">{{ post["content_text"] }}</div>
               </div>
-              <div class="item-text">{{ post["content_text"] }}</div>
-            </div>
-          {% endfor %}
-        </div>
-      {% else %}
-        <div class="muted">Aucun post enregistré pour le moment.</div>
-      {% endif %}
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="muted">Aucun post enregistré pour le moment.</div>
+        {% endif %}
+      </div>
+
+      <div class="card">
+        <h2>Derniers runs</h2>
+
+        {% if runs and runs|length > 0 %}
+          <div class="list">
+            {% for run in runs %}
+              <div class="item">
+                <div class="item-title">Run #{{ run["id"] }}</div>
+                <div class="item-meta">
+                  Début : {{ run["started_at"] }}<br>
+                  Fin : {{ run["finished_at"] or "En cours" }}
+                </div>
+                <div>
+                  <span class="status {{ run['status'] }}">{{ run["status"] }}</span>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="muted">Aucun run disponible pour le moment.</div>
+        {% endif %}
+      </div>
     </div>
   </div>
 </body>
