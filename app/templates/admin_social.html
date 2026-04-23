@@ -2,24 +2,76 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Admin Social</title>
+  <title>Dashboard Social | KDP ULYXEOS</title>
+  <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-  <h1>Admin Social - KDP ULYXEOS</h1>
+  <div class="page">
+    <div class="topbar">
+      <div class="brand">
+        <div class="brand-title">KDP ULYXEOS Social Admin</div>
+        <div class="brand-subtitle">Pilotage de l’autopost et de la bibliothèque média</div>
+      </div>
+      <div class="badge">🚀 Module social actif</div>
+    </div>
 
-  <p>Posts par jour : {{ settings["posts_per_day"] }}</p>
-  <p>Facebook : {{ settings["facebook_enabled"] }}</p>
-  <p>Instagram : {{ settings["instagram_enabled"] }}</p>
-  <p>TikTok : {{ settings["tiktok_enabled"] }}</p>
+    <div class="nav">
+      <a href="/admin/social">Dashboard</a>
+      <a href="/admin/social/media">Médias</a>
+      <a href="/admin/social/history">Historique</a>
+    </div>
 
-  <p><a href="/admin/social/media">Gérer les médias</a></p>
-  <p><a href="/admin/social/history">Historique</a></p>
+    <div class="hero">
+      <h1>Tableau de bord</h1>
+      <p>
+        Cette interface te permet de suivre la production automatique de posts, l’état des plateformes
+        et les contenus récemment générés pour KDP ULYXEOS.
+      </p>
+    </div>
 
-  <h2>Derniers posts</h2>
-  <ul>
-    {% for post in posts %}
-      <li>{{ post["created_at"] }} - {{ post["status"] }} - {{ post["content_text"] }}</li>
-    {% endfor %}
-  </ul>
+    <div class="grid grid-3">
+      <div class="card">
+        <div class="kpi-label">Posts par jour</div>
+        <div class="kpi-value">{{ settings["posts_per_day"] }}</div>
+      </div>
+
+      <div class="card">
+        <div class="kpi-label">Facebook</div>
+        <div class="kpi-value">
+          {% if settings["facebook_enabled"] == 1 %}ON{% else %}OFF{% endif %}
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="kpi-label">Instagram / TikTok</div>
+        <div class="kpi-value">
+          {% if settings["instagram_enabled"] == 1 or settings["tiktok_enabled"] == 1 %}ON{% else %}OFF{% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div style="height:18px;"></div>
+
+    <div class="card">
+      <h2>Derniers posts générés</h2>
+
+      {% if posts and posts|length > 0 %}
+        <div class="list">
+          {% for post in posts %}
+            <div class="item">
+              <div class="item-title">Post #{{ post["id"] }}</div>
+              <div class="item-meta">
+                {{ post["created_at"] }} ·
+                <span class="status {{ post['status'] }}">{{ post["status"] }}</span>
+              </div>
+              <div class="item-text">{{ post["content_text"] }}</div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="muted">Aucun post enregistré pour le moment.</div>
+      {% endif %}
+    </div>
+  </div>
 </body>
 </html>
