@@ -25,6 +25,13 @@ def get_db() -> sqlite3.Connection:
     return conn
 
 
+def ensure_column_exists(cur: sqlite3.Cursor, table_name: str, column_name: str, alter_sql: str) -> None:
+    cur.execute(f"PRAGMA table_info({table_name})")
+    columns = [row[1] for row in cur.fetchall()]
+    if column_name not in columns:
+        cur.execute(alter_sql)
+
+
 def init_db() -> None:
     ensure_directories()
     conn = get_db()
@@ -72,6 +79,13 @@ def init_db() -> None:
     )
     """)
 
+    ensure_column_exists(
+        cur,
+        "social_settings",
+        "content_mode",
+        "ALTER TABLE social_settings ADD COLUMN content_mode TEXT NOT NULL DEFAULT 'viral'"
+    )
+
     cur.execute("""
     CREATE TABLE IF NOT EXISTS social_posts (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -115,9 +129,15 @@ def init_db() -> None:
         INSERT INTO social_settings (
             id, posts_per_day, facebook_enabled, instagram_enabled, tiktok_enabled,
             email_notifications_enabled, notification_email, bonus_message_enabled,
-            min_sentences, max_sentences, updated_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
-        """, (1, 4, 1, 1, 1, 1, "admin@example.com", 1, 1, 3))
+            min_sentences, max_sentences, updated_at, content_mode
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'), ?)
+        """, (1, 4, 1, 1, 1, 1, "admin@example.com", 1, 1, 3, "viral"))
+    else:
+        cur.execute("""
+            UPDATE social_settings
+            SET content_mode = COALESCE(content_mode, 'viral')
+            WHERE id = 1
+        """)
 
     cur.execute("SELECT COUNT(*) AS count FROM social_templates")
     row = cur.fetchone()
