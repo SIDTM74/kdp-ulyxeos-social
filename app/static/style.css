@@ -366,3 +366,12 @@ pre {
         font-size: 25px;
     }
 }
+.hero form {
+    margin: 0;
+}
+
+.hero button {
+    min-width: 240px;
+    font-size: 15px;
+    box-shadow: 0 14px 30px rgba(37,99,235,0.22);
+}
