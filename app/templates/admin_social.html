@@ -10,9 +10,9 @@
     <div class="topbar">
       <div class="brand">
         <div class="brand-title">KDP ULYXEOS Social Admin</div>
-        <div class="brand-subtitle">Pilotage de l’autopost, statistiques et contenus récents</div>
+        <div class="brand-subtitle">Pilotage de l’autopost, statistiques et réglages propres</div>
       </div>
-      <div class="badge">🔥 Mode contenu avancé</div>
+      <div class="badge">⚙️ Clean settings</div>
     </div>
 
     <div class="nav">
@@ -24,26 +24,13 @@
     <div class="hero">
       <h1>Centre de contrôle social</h1>
       <p>
-        Ajuste le ton marketing de tes posts, surveille les performances
-        et déclenche une publication à la demande.
+        Active uniquement les plateformes prêtes, règle le ton marketing
+        et pilote ton moteur d’autopost sans bricolage.
       </p>
 
       <div style="margin-top: 20px; display:grid; gap:14px; max-width: 420px;">
         <form method="post" action="/admin/social/post-now">
           <button type="submit">⚡ Lancer un post maintenant</button>
-        </form>
-
-        <form method="post" action="/admin/social/content-mode">
-          <label for="content_mode" style="display:block; margin-bottom:8px; color:#cbd5e1;">
-            Mode de contenu
-          </label>
-          <select id="content_mode" name="content_mode">
-            <option value="standard" {% if settings["content_mode"] == "standard" %}selected{% endif %}>Standard</option>
-            <option value="viral" {% if settings["content_mode"] == "viral" %}selected{% endif %}>Viral</option>
-            <option value="ultra_aggressive" {% if settings["content_mode"] == "ultra_aggressive" %}selected{% endif %}>Ultra agressif</option>
-          </select>
-          <div style="height:10px;"></div>
-          <button type="submit" class="btn-secondary">💾 Sauvegarder le mode</button>
         </form>
       </div>
     </div>
@@ -83,6 +70,65 @@
       <div class="card">
         <div class="kpi-label">Runs échoués</div>
         <div class="kpi-value">{{ stats["failed_runs"] }}</div>
+      </div>
+    </div>
+
+    <div style="height:18px;"></div>
+
+    <div class="grid grid-2">
+      <div class="card">
+        <h2>Réglages plateformes</h2>
+        <form method="post" action="/admin/social/settings">
+          <div>
+            <label for="posts_per_day">Posts par jour</label>
+            <input id="posts_per_day" type="number" name="posts_per_day" min="1" max="12" value="{{ settings['posts_per_day'] }}">
+          </div>
+
+          <div style="display:grid; gap:10px; margin-top:8px;">
+            <label>
+              <input type="checkbox" name="facebook_enabled" value="1" {% if settings["facebook_enabled"] == 1 %}checked{% endif %}>
+              Facebook activé
+            </label>
+
+            <label>
+              <input type="checkbox" name="instagram_enabled" value="1" {% if settings["instagram_enabled"] == 1 %}checked{% endif %}>
+              Instagram activé
+            </label>
+
+            <label>
+              <input type="checkbox" name="tiktok_enabled" value="1" {% if settings["tiktok_enabled"] == 1 %}checked{% endif %}>
+              TikTok activé
+            </label>
+
+            <label>
+              <input type="checkbox" name="bonus_message_enabled" value="1" {% if settings["bonus_message_enabled"] == 1 %}checked{% endif %}>
+              Message bonus activé
+            </label>
+
+            <label>
+              <input type="checkbox" name="email_notifications_enabled" value="1" {% if settings["email_notifications_enabled"] == 1 %}checked{% endif %}>
+              Notifications email activées
+            </label>
+          </div>
+
+          <div style="height:14px;"></div>
+          <button type="submit" class="btn-secondary">💾 Sauvegarder les réglages</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <h2>Mode de contenu</h2>
+        <form method="post" action="/admin/social/content-mode">
+          <label for="content_mode">Choisis le ton marketing</label>
+          <select id="content_mode" name="content_mode">
+            <option value="standard" {% if settings["content_mode"] == "standard" %}selected{% endif %}>Standard</option>
+            <option value="viral" {% if settings["content_mode"] == "viral" %}selected{% endif %}>Viral</option>
+            <option value="ultra_aggressive" {% if settings["content_mode"] == "ultra_aggressive" %}selected{% endif %}>Ultra agressif</option>
+          </select>
+
+          <div style="height:14px;"></div>
+          <button type="submit" class="btn-secondary">🔥 Sauvegarder le mode</button>
+        </form>
       </div>
     </div>
 
