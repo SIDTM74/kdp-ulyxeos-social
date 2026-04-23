@@ -17,7 +17,7 @@ router = APIRouter(prefix="/internal", tags=["internal"])
 
 @router.post("/autopost/run")
 def run_autopost(request: Request):
-        received_secret = request.headers.get("x-internal-secret", "").strip()
+    received_secret = request.headers.get("x-internal-secret", "").strip()
     expected_secret = (INTERNAL_AUTPOST_SECRET or "").strip()
     admin_ok = is_admin_authenticated(request)
 
@@ -31,7 +31,6 @@ def run_autopost(request: Request):
                 "expected_present": bool(expected_secret),
                 "expected_length": len(expected_secret),
             },
-        )
         )
 
     conn = None
