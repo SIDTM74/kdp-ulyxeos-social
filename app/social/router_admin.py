@@ -134,6 +134,47 @@ def update_content_mode(request: Request, content_mode: str = Form(...)):
     return RedirectResponse("/admin/social", status_code=303)
 
 
+@router.post("/admin/social/settings")
+def update_social_settings(
+    request: Request,
+    posts_per_day: int = Form(...),
+    facebook_enabled: str | None = Form(default=None),
+    instagram_enabled: str | None = Form(default=None),
+    tiktok_enabled: str | None = Form(default=None),
+    bonus_message_enabled: str | None = Form(default=None),
+    email_notifications_enabled: str | None = Form(default=None),
+):
+    if not is_admin_authenticated(request):
+        return RedirectResponse("/admin/login", status_code=303)
+
+    posts_per_day = max(1, min(posts_per_day, 12))
+
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("""
+        UPDATE social_settings
+        SET posts_per_day = ?,
+            facebook_enabled = ?,
+            instagram_enabled = ?,
+            tiktok_enabled = ?,
+            bonus_message_enabled = ?,
+            email_notifications_enabled = ?,
+            updated_at = datetime('now')
+        WHERE id = 1
+    """, (
+        posts_per_day,
+        1 if facebook_enabled == "1" else 0,
+        1 if instagram_enabled == "1" else 0,
+        1 if tiktok_enabled == "1" else 0,
+        1 if bonus_message_enabled == "1" else 0,
+        1 if email_notifications_enabled == "1" else 0,
+    ))
+    conn.commit()
+    conn.close()
+
+    return RedirectResponse("/admin/social", status_code=303)
+
+
 @router.get("/admin/social/media", response_class=HTMLResponse)
 def admin_media_page(request: Request):
     if not is_admin_authenticated(request):
