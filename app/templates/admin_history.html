@@ -2,14 +2,45 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Historique</title>
+  <title>Historique | KDP ULYXEOS</title>
+  <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-  <h1>Historique des posts</h1>
-  <ul>
-    {% for row in rows %}
-      <li>{{ row["created_at"] }} - {{ row["status"] }} - {{ row["content_text"] }}</li>
-    {% endfor %}
-  </ul>
+  <div class="page">
+    <div class="topbar">
+      <div class="brand">
+        <div class="brand-title">Historique des posts</div>
+        <div class="brand-subtitle">Suivi des contenus générés et de leur statut</div>
+      </div>
+      <div class="badge">📊 Journal d’activité</div>
+    </div>
+
+    <div class="nav">
+      <a href="/admin/social">Dashboard</a>
+      <a href="/admin/social/media">Médias</a>
+      <a href="/admin/social/history">Historique</a>
+    </div>
+
+    <div class="card">
+      <h2>Posts enregistrés</h2>
+
+      {% if rows and rows|length > 0 %}
+        <div class="list">
+          {% for row in rows %}
+            <div class="item">
+              <div class="item-title">Post #{{ row["id"] }}</div>
+              <div class="item-meta">
+                {{ row["created_at"] }} ·
+                <span class="status {{ row['status'] }}">{{ row["status"] }}</span>
+              </div>
+              <div class="item-text">{{ row["content_text"] }}</div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="muted">Aucun historique disponible pour le moment.</div>
+      {% endif %}
+    </div>
+  </div>
 </body>
 </html>
