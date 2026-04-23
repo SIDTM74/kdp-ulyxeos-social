@@ -17,13 +17,19 @@ def save_uploaded_media(upload_file, media_type: str) -> str:
     return filepath
 
 
-def create_media_record(filename: str, filepath: str, media_type: str, platform_hint: str = "all") -> None:
+def create_media_record(
+    filename: str,
+    filepath: str,
+    media_type: str,
+    platform_hint: str = "all",
+    public_url: str = ""
+) -> None:
     conn = get_db()
     cur = conn.cursor()
     cur.execute("""
-        INSERT INTO social_media (filename, filepath, media_type, platform_hint, created_at)
-        VALUES (?, ?, ?, ?, ?)
-    """, (filename, filepath, media_type, platform_hint, now_iso()))
+        INSERT INTO social_media (filename, filepath, media_type, platform_hint, public_url, created_at)
+        VALUES (?, ?, ?, ?, ?, ?)
+    """, (filename, filepath, media_type, platform_hint, public_url.strip(), now_iso()))
     conn.commit()
     conn.close()
 
@@ -71,3 +77,15 @@ def mark_media_used(media_id: int, conn: Optional[sqlite3.Connection] = None) ->
     if own_conn:
         conn.commit()
         conn.close()
+
+
+def update_media_public_url(media_id: int, public_url: str) -> None:
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("""
+        UPDATE social_media
+        SET public_url = ?
+        WHERE id = ?
+    """, (public_url.strip(), media_id))
+    conn.commit()
+    conn.close()
