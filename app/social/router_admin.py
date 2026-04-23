@@ -223,19 +223,36 @@ def admin_history_page(request: Request):
 
     conn = get_db()
     cur = conn.cursor()
+
     cur.execute("""
         SELECT sp.id, sp.content_text, sp.created_at, sp.status
         FROM social_posts sp
         ORDER BY sp.id DESC
         LIMIT 50
     """)
-    rows = cur.fetchall()
+    posts = cur.fetchall()
+
+    history_rows = []
+    for post in posts:
+        cur.execute("""
+            SELECT platform, status, response_json, sent_at
+            FROM social_post_targets
+            WHERE social_post_id = ?
+            ORDER BY id DESC
+        """, (post["id"],))
+        targets = cur.fetchall()
+
+        history_rows.append({
+            "post": post,
+            "targets": targets
+        })
+
     conn.close()
 
     return templates.TemplateResponse(
         request,
         "admin_history.html",
         {
-            "rows": rows
+            "history_rows": history_rows
         }
     )
