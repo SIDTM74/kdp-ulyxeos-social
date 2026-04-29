@@ -1,8 +1,10 @@
+import time
 import requests
+
 from app.social.publishers_base import BasePublisher
 from app.config import INSTAGRAM_BUSINESS_ACCOUNT_ID, INSTAGRAM_ACCESS_TOKEN
-import time
-creation_id = create_data["id"]
+
+
 class InstagramPublisher(BasePublisher):
     platform_name = "instagram"
 
@@ -15,35 +17,6 @@ class InstagramPublisher(BasePublisher):
                 "response": {"error": "Instagram credentials missing"},
             }
 
-    for _ in range(12):
-    status_url = f"https://graph.facebook.com/v23.0/{creation_id}"
-    status_response = requests.get(
-        status_url,
-        params={
-            "fields": "status_code",
-            "access_token": INSTAGRAM_ACCESS_TOKEN,
-        },
-        timeout=30
-    )
-    status_data = status_response.json()
-
-    if status_data.get("status_code") == "FINISHED":
-        break
-
-    time.sleep(5)
-else:
-    return {
-        "platform": self.platform_name,
-        "status": "failed",
-        "platform_post_id": None,
-        "response": {
-            "error": "Instagram media not ready",
-            "last_status": status_data,
-        },
-    }
-        
-
-        
         if not media:
             return {
                 "platform": self.platform_name,
@@ -53,6 +26,7 @@ else:
             }
 
         media_url = (media.get("public_url") or "").strip()
+
         if not media_url:
             return {
                 "platform": self.platform_name,
@@ -62,13 +36,20 @@ else:
             }
 
         try:
+            # --------------------------------------------------
+            # 1. CREATE INSTAGRAM MEDIA CONTAINER
+            # --------------------------------------------------
+
             create_url = f"https://graph.facebook.com/v23.0/{INSTAGRAM_BUSINESS_ACCOUNT_ID}/media"
+
             payload = {
                 "caption": text,
                 "access_token": INSTAGRAM_ACCESS_TOKEN,
             }
 
-            if media.get("media_type") == "video":
+            media_type = (media.get("media_type") or "").lower()
+
+            if media_type == "video":
                 payload["media_type"] = "REELS"
                 payload["video_url"] = media_url
             else:
@@ -82,18 +63,83 @@ else:
                     "platform": self.platform_name,
                     "status": "failed",
                     "platform_post_id": None,
-                    "response": create_data,
+                    "response": {
+                        "step": "create_media_container",
+                        "http_status": create_response.status_code,
+                        "data": create_data,
+                    },
                 }
 
             creation_id = create_data["id"]
 
+            # --------------------------------------------------
+            # 2. WAIT UNTIL INSTAGRAM MEDIA IS READY
+            # --------------------------------------------------
+
+            last_status_data = {}
+
+            for _ in range(12):  # 12 x 5 sec = max 60 sec
+                status_url = f"https://graph.facebook.com/v23.0/{creation_id}"
+
+                status_response = requests.get(
+                    status_url,
+                    params={
+                        "fields": "status_code",
+                        "access_token": INSTAGRAM_ACCESS_TOKEN,
+                    },
+                    timeout=30,
+                )
+
+                last_status_data = status_response.json()
+                status_code = last_status_data.get("status_code")
+
+                if status_code == "FINISHED":
+                    break
+
+                if status_code == "ERROR":
+                    return {
+                        "platform": self.platform_name,
+                        "status": "failed",
+                        "platform_post_id": None,
+                        "response": {
+                            "step": "wait_media_ready",
+                            "error": "Instagram media processing failed",
+                            "data": last_status_data,
+                        },
+                    }
+
+                time.sleep(5)
+
+            else:
+                return {
+                    "platform": self.platform_name,
+                    "status": "failed",
+                    "platform_post_id": None,
+                    "response": {
+                        "step": "wait_media_ready",
+                        "error": "Instagram media not ready after waiting",
+                        "creation_id": creation_id,
+                        "last_status": last_status_data,
+                    },
+                }
+
+            # --------------------------------------------------
+            # 3. PUBLISH MEDIA
+            # --------------------------------------------------
+
             publish_url = f"https://graph.facebook.com/v23.0/{INSTAGRAM_BUSINESS_ACCOUNT_ID}/media_publish"
+
             publish_payload = {
                 "creation_id": creation_id,
                 "access_token": INSTAGRAM_ACCESS_TOKEN,
             }
 
-            publish_response = requests.post(publish_url, data=publish_payload, timeout=60)
+            publish_response = requests.post(
+                publish_url,
+                data=publish_payload,
+                timeout=60,
+            )
+
             publish_data = publish_response.json()
 
             if publish_response.ok and "id" in publish_data:
@@ -108,7 +154,11 @@ else:
                 "platform": self.platform_name,
                 "status": "failed",
                 "platform_post_id": None,
-                "response": publish_data,
+                "response": {
+                    "step": "publish_media",
+                    "http_status": publish_response.status_code,
+                    "data": publish_data,
+                },
             }
 
         except Exception as exc:
@@ -116,5 +166,8 @@ else:
                 "platform": self.platform_name,
                 "status": "failed",
                 "platform_post_id": None,
-                "response": {"error": str(exc)},
+                "response": {
+                    "error": str(exc),
+                    "type": exc.__class__.__name__,
+                },
             }
