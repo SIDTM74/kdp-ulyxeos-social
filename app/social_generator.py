@@ -12,6 +12,10 @@ HOOKS = [
     "Tu peux avoir un bon livre et rester invisible sur Amazon.",
     "Arrête d’improviser ton lancement Amazon KDP.",
     "Sur Amazon KDP, la visibilité ne se gagne pas au hasard.",
+    "Tu publies sur Amazon… mais personne ne voit ton livre ?",
+    "Ton livre est en ligne… mais invisible ?",
+    "Tu as publié ton livre… et maintenant ?",
+    "Pourquoi ton livre ne se vend pas sur Amazon ?",
 ]
 
 BENEFITS = [
@@ -29,6 +33,9 @@ CTA = [
     "Donne à ton livre une stratégie plus claire.",
     "Passe d’un simple manuscrit à un vrai plan marketing.",
     "Arrête d’avancer à l’aveugle.",
+    "Teste KDP ULYXEOS dès maintenant.",
+    "Découvre ton potentiel de vente en quelques minutes.",
+    "Passe à une vraie stratégie Amazon.",
 ]
 
 BONUS = [
