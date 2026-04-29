@@ -1,8 +1,8 @@
 import requests
 from app.social.publishers_base import BasePublisher
 from app.config import INSTAGRAM_BUSINESS_ACCOUNT_ID, INSTAGRAM_ACCESS_TOKEN
-
-
+import time
+creation_id = create_data["id"]
 class InstagramPublisher(BasePublisher):
     platform_name = "instagram"
 
@@ -15,6 +15,35 @@ class InstagramPublisher(BasePublisher):
                 "response": {"error": "Instagram credentials missing"},
             }
 
+    for _ in range(12):
+    status_url = f"https://graph.facebook.com/v23.0/{creation_id}"
+    status_response = requests.get(
+        status_url,
+        params={
+            "fields": "status_code",
+            "access_token": INSTAGRAM_ACCESS_TOKEN,
+        },
+        timeout=30
+    )
+    status_data = status_response.json()
+
+    if status_data.get("status_code") == "FINISHED":
+        break
+
+    time.sleep(5)
+else:
+    return {
+        "platform": self.platform_name,
+        "status": "failed",
+        "platform_post_id": None,
+        "response": {
+            "error": "Instagram media not ready",
+            "last_status": status_data,
+        },
+    }
+        
+
+        
         if not media:
             return {
                 "platform": self.platform_name,
