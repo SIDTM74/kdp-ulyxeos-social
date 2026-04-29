@@ -50,6 +50,11 @@ def run_autopost(request: Request):
 
         text = generate_social_post()
 
+        link = "https://kdp-ulyxeos.com"
+
+        if link not in text:
+            text = f"{text.strip()}\n\n🚀 Découvre KDP ULYXEOS :\n{link}"
+
         cur.execute("SELECT * FROM social_settings WHERE id = 1")
         settings = cur.fetchone()
 
