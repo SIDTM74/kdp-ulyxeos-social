@@ -25,7 +25,18 @@ def admin_login_page(request: Request):
         "admin_login.html",
         {}
     )
+# //////////////////////////////////////////////////////////////////////////////////////
+@router.get("/admin/creator", response_class=HTMLResponse)
+def admin_creator_page(request: Request):
+    if not is_admin_authenticated(request):
+        return RedirectResponse("/admin/login", status_code=303)
 
+    return templates.TemplateResponse(
+        request,
+        "admin_creator.html",
+        {}
+    )
+# //////////////////////////////////////////////////////////////////////////////////////
 
 @router.post("/admin/login")
 def admin_login(request: Request, email: str = Form(...), password: str = Form(...)):
