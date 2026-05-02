@@ -78,7 +78,7 @@ class InstagramPublisher(BasePublisher):
 
             last_status_data = {}
 
-            for _ in range(36):  # 36 x 5 sec = max 180 sec
+            for _ in range(54):  # 54 x 5 sec = max 240 sec
                 status_url = f"https://graph.facebook.com/v23.0/{creation_id}"
 
                 status_response = requests.get(
