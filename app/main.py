@@ -226,7 +226,8 @@ def admin_media_page():
         </div>
 
         <h1>Bibliothèque médias</h1>
-
+        <h2 style="color:red;">TEST BOUTON SUPPRESSION VERSION 2</h2>
+        
         <div class="card">
             <h2>Ajouter un média</h2>
 
