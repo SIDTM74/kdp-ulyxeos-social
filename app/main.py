@@ -115,9 +115,13 @@ def admin_media_page():
         <p><a href="{public_url}" target="_blank">Voir le média</a></p>
 
         <form method="post" action="/admin/social/media/delete" style="margin-top:12px;">
+        
         <input type="hidden" name="media_id" value="{media_id}">
+        
         <button class="danger" type="submit" onclick="return confirm('Supprimer ce média ?')">Supprimer</button>
+        
         </form>
+    
     </div>
     """  
     return f"""
