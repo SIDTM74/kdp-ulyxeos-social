@@ -100,16 +100,14 @@
 
                 
                 <form method="post" action="/admin/social/media/delete">
-                        <input type="hidden" name="media_id" value="{media_id}">
-                        <button type="submit" class="delete-btn"
-                        onclick="return confirm('Supprimer définitivement ce média ?')">
-                        🗑 Supprimer
-                        </button>
-                </form>
-
-                
-              </form>
-            </div>
+                    <input type="hidden" name="media_id" value="{{ media.id }}">
+                    <button type="submit" class="danger"
+                    onclick="return confirm('Supprimer ce média ?')">
+                    Supprimer
+                    </button>
+               </form>
+             </form>
+           </div>
           {% endfor %}
         </div>
       {% else %}
