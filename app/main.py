@@ -81,7 +81,9 @@ def root():
 def health():
     return {"status": "ok"}
 
-# -------------------------------------------------
+# ---------------------------------------------------------
+# ================ /admin/social/media ====================
+# ---------------------------------------------------------
 @app.get("/admin/social/media", response_class=HTMLResponse)
 def admin_media_page():
     conn = sqlite3.connect(MEDIA_DB)
@@ -115,11 +117,11 @@ def admin_media_page():
         <p><a href="{public_url}" target="_blank">Voir le média</a></p>
 
         <form method="post" action="/admin/social/media/delete" style="margin-top:12px;">
-        
         <input type="hidden" name="media_id" value="{media_id}">
-        
-        <button class="danger" type="submit" onclick="return confirm('Supprimer ce média ?')">Supprimer</button>
-        
+        <button class="danger" type="submit"
+                onclick="return confirm('Supprimer ce média ?')">
+            Supprimer
+        </button>
         </form>
     
     </div>
@@ -222,7 +224,9 @@ def admin_media_page():
     </body>
     </html>
     """
-# -------------------------------------------------
+# ---------------------------------------------------------
+# ================ /admin/social/media/upload =============
+# ---------------------------------------------------------
 @app.post("/admin/social/media/upload")
 async def upload_media(
     media_type: str = Form(...),
@@ -276,7 +280,9 @@ async def upload_media(
     conn.close()
 
     return RedirectResponse("/admin/social/media", status_code=303)
-# -------------------------------------------------
+# ------------------------------------------------------------------------
+# ================= /admin/social/media/delete ===========================
+# ------------------------------------------------------------------------
 @app.post("/admin/social/media/delete")
 def delete_media(media_id: int = Form(...)):
     conn = sqlite3.connect(MEDIA_DB)
