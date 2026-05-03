@@ -90,7 +90,7 @@ def admin_media_page():
     c = conn.cursor()
 
     c.execute("""
-        SELECT id, filename, media_type, public_url, created_at
+        SELECT id, filename, media_type, public_url, file_path, created_at
         FROM media
         ORDER BY id DESC
     """)
@@ -100,50 +100,65 @@ def admin_media_page():
 
     rows = ""
 
-    for media_id, filename, media_type, public_url, created_at in medias:
-        preview = ""
-
+    for media_id, filename, media_type, public_url, file_path, created_at in medias:
         if media_type == "image":
-            preview = f'<img src="{public_url}" style="max-width:160px;border-radius:12px;">'
+            preview = f"""
+            <img src="{public_url}" style="width:100%;max-height:180px;object-fit:cover;border-radius:12px;">
+            """
         else:
-            preview = f'<video src="{public_url}" controls style="max-width:220px;border-radius:12px;"></video>'
+            preview = f"""
+            <video src="{public_url}" controls style="width:100%;max-height:180px;border-radius:12px;"></video>
+            """
 
-    rows += f"""
-    <div class="media-card">
-    <div>{preview}</div>
+        rows += f"""
+        <div class="media-card">
+            {preview}
 
-        <h3>{filename}</h3>
-        <p>Type : {media_type}</p>
-        <p><a href="{public_url}" target="_blank">Voir le média</a></p>
+            <h3>{filename}</h3>
+            <p><strong>Type :</strong> {media_type}</p>
+            <p><strong>Date :</strong> {created_at}</p>
 
-        <form method="post" action="/admin/social/media/delete" style="margin-top:12px;">
-        <input type="hidden" name="media_id" value="{media_id}">
-        <button class="danger" type="submit"
-                onclick="return confirm('Supprimer ce média ?')">
-            Supprimer
-        </button>
-        </form>
-    
-    </div>
-    """  
+            <p>
+                <a href="{public_url}" target="_blank">Voir le média</a>
+            </p>
+
+            <form method="post" action="/admin/social/media/delete">
+                <input type="hidden" name="media_id" value="{media_id}">
+                <button type="submit" class="delete-btn"
+                        onclick="return confirm('Supprimer définitivement ce média ?')">
+                    🗑 Supprimer
+                </button>
+            </form>
+        </div>
+        """
+
     return f"""
-    <html>
+    <!DOCTYPE html>
+    <html lang="fr">
     <head>
         <meta charset="utf-8">
         <title>Médias - KDP ULYXEOS Social</title>
+
         <style>
             body {{
-                font-family: Arial;
+                font-family: Arial, sans-serif;
                 background:#0f172a;
                 color:white;
                 padding:30px;
+                margin:0;
             }}
+
+            .nav {{
+                margin-bottom:25px;
+            }}
+
             .nav a {{
                 color:#fde68a;
                 margin-right:15px;
                 text-decoration:none;
                 font-weight:bold;
             }}
+
             .card {{
                 background:#111827;
                 padding:22px;
@@ -151,6 +166,7 @@ def admin_media_page():
                 margin-bottom:25px;
                 border:1px solid #334155;
             }}
+
             input, select {{
                 padding:12px;
                 border-radius:10px;
@@ -159,6 +175,7 @@ def admin_media_page():
                 color:white;
                 margin:8px 0;
             }}
+
             button {{
                 padding:12px 18px;
                 border:none;
@@ -168,23 +185,38 @@ def admin_media_page():
                 font-weight:bold;
                 cursor:pointer;
             }}
-            .danger {{
+
+            .delete-btn {{
+                width:100%;
+                margin-top:12px;
                 background:#dc2626;
+                color:white;
             }}
+
             .grid {{
                 display:grid;
                 grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
                 gap:18px;
             }}
+
             .media-card {{
                 background:#111827;
                 padding:18px;
                 border-radius:18px;
                 border:1px solid #334155;
             }}
-            a {{ color:#93c5fd; }}
+
+            .media-card h3 {{
+                font-size:15px;
+                word-break:break-all;
+            }}
+
+            a {{
+                color:#93c5fd;
+            }}
         </style>
     </head>
+
     <body>
 
         <div class="nav">
