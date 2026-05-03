@@ -318,14 +318,21 @@ async def upload_media(
 # ------------------------------------------------------------------------
 @app.post("/admin/social/media/delete")
 def delete_media(media_id: int = Form(...)):
+    print("DELETE MEDIA ID =", media_id)
+
     conn = sqlite3.connect(MEDIA_DB)
     c = conn.cursor()
 
     c.execute("SELECT file_path FROM media WHERE id = ?", (media_id,))
     result = c.fetchone()
 
+    print("DELETE RESULT =", result)
+
     if result:
         file_path = result[0]
+
+        print("FILE PATH =", file_path)
+        print("FILE EXISTS =", os.path.exists(file_path))
 
         if os.path.exists(file_path):
             os.remove(file_path)
