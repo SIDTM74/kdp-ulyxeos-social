@@ -119,7 +119,7 @@ def admin_media_page():
         <button class="danger" type="submit" onclick="return confirm('Supprimer ce média ?')">Supprimer</button>
         </form>
     </div>
- <!--       """   -->
+    """  
     return f"""
     <html>
     <head>
