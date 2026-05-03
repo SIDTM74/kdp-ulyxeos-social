@@ -106,7 +106,7 @@ def admin_media_page():
         else:
             preview = f'<video src="{public_url}" controls style="max-width:220px;border-radius:12px;"></video>'
 
-       rows += f"""
+    rows += f"""
     <div class="media-card">
     <div>{preview}</div>
 
