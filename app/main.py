@@ -106,20 +106,20 @@ def admin_media_page():
         else:
             preview = f'<video src="{public_url}" controls style="max-width:220px;border-radius:12px;"></video>'
 
-        rows += f"""
-        <div class="media-card">
-            <div>{preview}</div>
-            <h3>{filename}</h3>
-            <p>Type : {media_type}</p>
-            <p><a href="{public_url}" target="_blank">Voir le média</a></p>
+       rows += f"""
+<div class="media-card">
+    <div>{preview}</div>
 
-            <form method="post" action="/admin/social/media/delete">
-                <input type="hidden" name="media_id" value="{media_id}">
-                <button class="danger" type="submit">Supprimer</button>
-            </form>
-        </div>
-        """
+    <h3>{filename}</h3>
+    <p>Type : {media_type}</p>
+    <p><a href="{public_url}" target="_blank">Voir le média</a></p>
 
+    <form method="post" action="/admin/social/media/delete" style="margin-top:12px;">
+        <input type="hidden" name="media_id" value="{media_id}">
+        <button class="danger" type="submit" onclick="return confirm('Supprimer ce média ?')">Supprimer</button>
+    </form>
+</div>
+"""
     return f"""
     <html>
     <head>
