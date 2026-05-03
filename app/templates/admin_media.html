@@ -97,6 +97,17 @@
                 >
                 <div style="height:10px;"></div>
                 <button type="submit" class="btn-secondary">💾 Sauvegarder l’URL</button>
+
+                
+                <form method="post" action="/admin/social/media/delete">
+                        <input type="hidden" name="media_id" value="{media_id}">
+                        <button type="submit" class="delete-btn"
+                        onclick="return confirm('Supprimer définitivement ce média ?')">
+                        🗑 Supprimer
+                        </button>
+                </form>
+
+                
               </form>
             </div>
           {% endfor %}
