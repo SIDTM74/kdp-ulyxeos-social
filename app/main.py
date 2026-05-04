@@ -84,180 +84,30 @@ def health():
 # ---------------------------------------------------------
 # ================ /admin/social/media ====================
 # ---------------------------------------------------------
+from fastapi.templating import Jinja2Templates
+from fastapi import Request
+
+templates = Jinja2Templates(directory="templates")
+
 @app.get("/admin/social/media", response_class=HTMLResponse)
-def admin_media_page():
+def admin_media_page(request: Request):
     conn = sqlite3.connect(MEDIA_DB)
+    conn.row_factory = sqlite3.Row
     c = conn.cursor()
 
     c.execute("""
-        SELECT id, filename, media_type, public_url, file_path, created_at FROM media
+        SELECT id, filename, media_type, public_url, file_path, created_at
+        FROM media
         ORDER BY id DESC
     """)
 
     medias = c.fetchall()
     conn.close()
 
-    rows = ""
-
-    for media_id, filename, media_type, public_url, file_path, created_at in medias:
-        if media_type == "image":
-            preview = f"""
-            <img src="{public_url}" style="width:100%;max-height:180px;object-fit:cover;border-radius:12px;">
-            """
-        else:
-            preview = f"""
-            <video src="{public_url}" controls style="width:100%;max-height:180px;border-radius:12px;"></video>
-            """
-
-        rows += f"""
-        <div class="media-card">
-            {preview}
-
-            <h3>{filename}</h3>
-            <p><strong>Type :</strong> {media_type}</p>
-            <p><strong>Date :</strong> {created_at}</p>
-
-            <p>
-                <a href="{public_url}" target="_blank">Voir le média</a>
-            </p>
-<!---------------------------------------------------------------------------------------
-            <form method="post" action="/admin/social/media/delete">
-                <input type="hidden" name="media_id" value="{media_id}">
-                <button type="submit" class="delete-btn"
-                        onclick="return confirm('Supprimer définitivement ce média ?')">
-                    🗑 Supprimer
-                </button>
-            </form>
----------------------------------------------------------------------------------------->
-            
-        </div>
-        """
-
-    return f"""
-    <!DOCTYPE html>
-    <html lang="fr">
-    <head>
-        <meta charset="utf-8">
-        <title>Médias - KDP ULYXEOS Social</title>
-
-        <style>
-            body {{
-                font-family: Arial, sans-serif;
-                background:#0f172a;
-                color:white;
-                padding:30px;
-                margin:0;
-            }}
-
-            .nav {{
-                margin-bottom:25px;
-            }}
-
-            .nav a {{
-                color:#fde68a;
-                margin-right:15px;
-                text-decoration:none;
-                font-weight:bold;
-            }}
-
-            .card {{
-                background:#111827;
-                padding:22px;
-                border-radius:18px;
-                margin-bottom:25px;
-                border:1px solid #334155;
-            }}
-
-            input, select {{
-                padding:12px;
-                border-radius:10px;
-                border:1px solid #475569;
-                background:#020617;
-                color:white;
-                margin:8px 0;
-            }}
-
-            button {{
-                padding:12px 18px;
-                border:none;
-                border-radius:12px;
-                background:#2563eb;
-                color:white;
-                font-weight:bold;
-                cursor:pointer;
-            }}
-
-            .delete-btn {{
-                width:100%;
-                margin-top:12px;
-                background:#dc2626;
-                color:white;
-            }}
-
-            .grid {{
-                display:grid;
-                grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
-                gap:18px;
-            }}
-
-            .media-card {{
-                background:#111827;
-                padding:18px;
-                border-radius:18px;
-                border:1px solid #334155;
-            }}
-
-            .media-card h3 {{
-                font-size:15px;
-                word-break:break-all;
-            }}
-
-            a {{
-                color:#93c5fd;
-            }}
-        </style>
-    </head>
-
-    <body>
-
-        <div class="nav">
-            <a href="/admin/social">Dashboard</a>
-            <a href="/admin/social/media">Médias</a>
-            <a href="/admin/social/history">Historique</a>
-        </div>
-
-        <h1>Bibliothèque médias</h1>
-        <h2 style="color:red;">TEST BOUTON SUPPRESSION VERSION 2</h2>
-        
-        <div class="card">
-            <h2>Ajouter un média</h2>
-
-            <form method="post" action="/admin/social/media/upload" enctype="multipart/form-data">
-                <div>
-                    <label>Type :</label><br>
-                    <select name="media_type" required>
-                        <option value="image">Image</option>
-                        <option value="video">Vidéo</option>
-                    </select>
-                </div>
-
-                <div>
-                    <input type="file" name="file" required>
-                </div>
-
-                <button type="submit">Ajouter le média</button>
-            </form>
-        </div>
-
-        <h2>Médias enregistrés</h2>
-        
-        <div class="grid">
-            {rows if rows else "<p>Aucun média enregistré.</p>"}
-        </div>
-
-    </body>
-    </html>
-    """
+    return templates.TemplateResponse(
+        "admin_media.html",
+        {"request": request, "media_items": medias}
+    )
 # ---------------------------------------------------------
 # ================ /admin/social/media/upload =============
 # ---------------------------------------------------------
