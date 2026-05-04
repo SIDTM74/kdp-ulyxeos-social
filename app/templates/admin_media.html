@@ -71,45 +71,44 @@
 
       {% if media_items and media_items|length > 0 %}
         <div class="list">
-          {% for media in media_items %}
-            <div class="item">
-              <div class="item-title">#{{ media["id"] }} · {{ media["filename"] }}</div>
-              <div class="item-meta">
-                Type : {{ media["media_type"] }} ·
-                Plateforme : {{ media["platform_hint"] }} ·
-                Utilisations : {{ media["usage_count"] }}
-              </div>
+         {% for media in media_items %}
+  <div class="item">
+    <div class="item-title">#{{ media["id"] }} · {{ media["filename"] }}</div>
 
-              <div class="item-meta">
-                Dernière utilisation : {{ media["last_used_at"] or "Jamais" }}
-              </div>
+    <div class="item-meta">
+      Type : {{ media["media_type"] }} ·
+      Plateforme : {{ media["platform_hint"] }} ·
+      Utilisations : {{ media["usage_count"] }}
+    </div>
 
-              <div style="height:10px;"></div>
+    <div class="item-meta">
+      Dernière utilisation : {{ media["last_used_at"] or "Jamais" }}
+    </div>
 
-              <form method="post" action="/admin/social/media/public-url">
-                <input type="hidden" name="media_id" value="{{ media['id'] }}">
-                <label>URL publique</label>
-                <input
-                  type="url"
-                  name="public_url"
-                  value="{{ media['public_url'] or '' }}"
-                  placeholder="https://..."
-                >
-                <div style="height:10px;"></div>
-                <button type="submit" class="btn-secondary">💾 Sauvegarder l’URL</button>
+    <div style="height:10px;"></div>
 
-                
-               <form method="post" action="/admin/social/media/delete" style="margin-top:12px;">
-                      <input type="hidden" name="media_id" value="1">
-                      <button type="submit" class="danger"
-                      onclick="return confirm('Supprimer ce média ?')">
-                      🗑 Supprimer
-                      </button>
-              </form>
-                
-             </form>
-           </div>
-          {% endfor %}
+    <form method="post" action="/admin/social/media/public-url">
+      <input type="hidden" name="media_id" value="{{ media['id'] }}">
+      <label>URL publique</label>
+      <input
+        type="url"
+        name="public_url"
+        value="{{ media['public_url'] or '' }}"
+        placeholder="https://..."
+      >
+      <div style="height:10px;"></div>
+      <button type="submit" class="btn-secondary">💾 Sauvegarder l’URL</button>
+    </form>
+
+    <form method="post" action="/admin/social/media/delete" style="margin-top:12px;">
+      <input type="hidden" name="media_id" value="{{ media['id'] }}">
+      <button type="submit" class="danger"
+              onclick="return confirm('Supprimer ce média ?')">
+        🗑 Supprimer
+      </button>
+    </form>
+  </div>
+{% endfor %}
         </div>
       {% else %}
         <div class="muted">Aucun média enregistré pour le moment.</div>
