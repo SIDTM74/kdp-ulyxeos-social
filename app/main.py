@@ -102,6 +102,11 @@ def admin_media_page(request: Request):
     """)
 
     medias = c.fetchall()
+    
+    print("ADMIN MEDIA DB =", MEDIA_DB)
+    print("ADMIN MEDIA COUNT =", len(medias))
+    print("ADMIN MEDIA IDS =", [m[0] for m in medias[:10]])
+   
     conn.close()
 
     return templates.TemplateResponse(
@@ -188,6 +193,8 @@ def delete_media(media_id: int = Form(...)):
         cur.execute("DELETE FROM media WHERE id = ?", (media_id,))
         conn.commit()
 
+    print("DELETE MEDIA DB =", MEDIA_DB)
+    
     conn.close()
 
     return RedirectResponse("/admin/social/media", status_code=303)
