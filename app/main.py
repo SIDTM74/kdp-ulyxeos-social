@@ -106,7 +106,10 @@ def admin_media_page(request: Request):
 
     return templates.TemplateResponse(
         "admin_media.html",
-        {"request": request, "media_items": medias}
+        {
+            "request": request,
+            "media_items": medias
+        }
     )
 # ---------------------------------------------------------
 # ================ /admin/social/media/upload =============
