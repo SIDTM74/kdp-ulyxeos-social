@@ -240,4 +240,28 @@ def get_file_path_from_public_url(public_url: str):
 
     return ""
 # -------------------------------------------------
+@app.get("/admin/social/media/clean")
+def clean_missing_media():
+    conn = sqlite3.connect(MEDIA_DB)
+    conn.row_factory = sqlite3.Row
+    cur = conn.cursor()
+
+    cur.execute("SELECT id, public_url, file_path FROM media")
+    rows = cur.fetchall()
+
+    deleted = []
+
+    for row in rows:
+        media_id = row["id"]
+        file_path = row["file_path"] or get_file_path_from_public_url(row["public_url"])
+
+        if not file_path or not os.path.exists(file_path):
+            cur.execute("DELETE FROM media WHERE id = ?", (media_id,))
+            deleted.append(media_id)
+
+    conn.commit()
+    conn.close()
+
+    return {"deleted": deleted, "count": len(deleted)}
+# -------------------------------------------------
 
