@@ -176,28 +176,25 @@ async def upload_media(
 # ================= /admin/social/media/delete ===========================
 # ------------------------------------------------------------------------
 @app.post("/admin/social/media/delete")
-def delete_media(media_id: int = Form(...)):
+def delete_media(
+    media_id: int = Form(None),
+    file_path: str = Form("")
+):
     print("DELETE MEDIA ID =", media_id)
-    print("DELETE MEDIA DB =", MEDIA_DB)
+    print("DELETE FILE PATH =", file_path)
 
     conn = sqlite3.connect(MEDIA_DB)
-    c = conn.cursor()
+    conn.row_factory = sqlite3.Row
+    cur = conn.cursor()
 
-    c.execute("SELECT id, filename, file_path FROM media WHERE id = ?", (media_id,))
-    media = c.fetchone()
+    if file_path and os.path.exists(file_path):
+        os.remove(file_path)
+        print("FILE DELETED =", file_path)
 
-    print("DELETE FOUND =", media)
-
-    if media:
-        _, filename, file_path = media
-
-        if file_path and os.path.exists(file_path):
-            os.remove(file_path)
-            print("FILE DELETED =", file_path)
-
-        c.execute("DELETE FROM media WHERE id = ?", (media_id,))
+    if media_id:
+        cur.execute("DELETE FROM media WHERE id = ?", (media_id,))
         conn.commit()
-        print("DB ROW DELETED =", media_id)
+        print("DB DELETE ATTEMPT =", media_id)
 
     conn.close()
 
