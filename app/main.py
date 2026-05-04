@@ -321,8 +321,7 @@ def delete_media(request: Request, media_id: int = Form(...)):
     try:
         print("DELETE MEDIA ID =", media_id)
 
-        if not is_admin(request):
-            print("DELETE ERROR = not admin")
+        if not is_admin_authenticated(request):
             return RedirectResponse("/admin/login", status_code=303)
 
         conn = sqlite3.connect(MEDIA_DB)
@@ -332,24 +331,19 @@ def delete_media(request: Request, media_id: int = Form(...)):
         cur.execute("SELECT * FROM media WHERE id = ?", (media_id,))
         media = cur.fetchone()
 
-        print("DELETE MEDIA FOUND =", dict(media) if media else None)
-
         if not media:
             conn.close()
             return RedirectResponse("/admin/social/media", status_code=303)
 
         file_path = media["file_path"] if "file_path" in media.keys() else None
-        print("DELETE FILE PATH =", file_path)
 
         if file_path and os.path.exists(file_path):
             os.remove(file_path)
-            print("DELETE FILE OK")
 
         cur.execute("DELETE FROM media WHERE id = ?", (media_id,))
         conn.commit()
         conn.close()
 
-        print("DELETE DB OK")
         return RedirectResponse("/admin/social/media", status_code=303)
 
     except Exception as e:
