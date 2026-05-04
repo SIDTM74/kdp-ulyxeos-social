@@ -120,7 +120,7 @@ def admin_media_page():
             <p>
                 <a href="{public_url}" target="_blank">Voir le média</a>
             </p>
-
+<!---------------------------------------------------------------------------------------
             <form method="post" action="/admin/social/media/delete">
                 <input type="hidden" name="media_id" value="{media_id}">
                 <button type="submit" class="delete-btn"
@@ -128,6 +128,8 @@ def admin_media_page():
                     🗑 Supprimer
                 </button>
             </form>
+---------------------------------------------------------------------------------------->
+            
         </div>
         """
 
