@@ -134,13 +134,14 @@
           URL : <a href="{{ media['public_url'] }}" target="_blank" style="color:#93c5fd;">voir</a>
         </div>
 
-        <form method="post" action="/admin/social/media/delete">
+      <form method="post" action="/admin/social/media/delete">
           <input type="hidden" name="media_id" value="{{ media['id'] }}">
+          <input type="hidden" name="file_path" value="{{ media['file_path'] }}">
           <button type="submit" class="danger"
-                  onclick="return confirm('Supprimer définitivement ce média ?')">
+            onclick="return confirm('Supprimer ce média ?')">
             🗑 Supprimer
           </button>
-        </form>
+      </form>
 
       </div>
     {% else %}
