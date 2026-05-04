@@ -198,7 +198,7 @@ def debug_media_db():
     conn.row_factory = sqlite3.Row
     cur = conn.cursor()
 
-    cur.execute("SELECT * FROM media")
+    cur.execute("SELECT id, filename, file_path, public_url FROM media ORDER BY id DESC")
     rows = cur.fetchall()
     conn.close()
 
