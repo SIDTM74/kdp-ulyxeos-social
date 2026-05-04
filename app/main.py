@@ -353,7 +353,22 @@ def delete_media(media_id: int = Form(...)):
         return HTMLResponse(f"Erreur suppression média : {e}", status_code=500)
 
 # -------------------------------------------------
+@app.get("/debug/media-db")
+def debug_media_db():
+    conn = sqlite3.connect(MEDIA_DB)
+    conn.row_factory = sqlite3.Row
+    cur = conn.cursor()
 
+    cur.execute("SELECT * FROM media")
+    rows = cur.fetchall()
+    conn.close()
+
+    return {
+        "MEDIA_DB": MEDIA_DB,
+        "count": len(rows),
+        "items": [dict(row) for row in rows]
+    }
 # -------------------------------------------------
 
+# -------------------------------------------------
 
