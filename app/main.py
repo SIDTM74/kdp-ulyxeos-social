@@ -178,24 +178,37 @@ async def upload_media(
 @app.post("/admin/social/media/delete")
 def delete_media(
     media_id: int = Form(None),
-    file_path: str = Form("")
+    file_path: str = Form(""),
+    public_url: str = Form("")
 ):
     print("DELETE MEDIA ID =", media_id)
     print("DELETE FILE PATH =", file_path)
+    print("DELETE PUBLIC URL =", public_url)
 
-    conn = sqlite3.connect(MEDIA_DB)
-    conn.row_factory = sqlite3.Row
-    cur = conn.cursor()
+    # Si file_path est vide, on le reconstruit depuis public_url
+    if not file_path and public_url:
+        if "/media/images/" in public_url:
+            filename = public_url.split("/media/images/")[-1]
+            file_path = os.path.join(IMAGE_DIR, filename)
+
+        elif "/media/videos/" in public_url:
+            filename = public_url.split("/media/videos/")[-1]
+            file_path = os.path.join(VIDEO_DIR, filename)
+
+    print("FINAL FILE PATH =", file_path)
 
     if file_path and os.path.exists(file_path):
         os.remove(file_path)
         print("FILE DELETED =", file_path)
 
+    conn = sqlite3.connect(MEDIA_DB)
+    cur = conn.cursor()
+
     if media_id:
         cur.execute("DELETE FROM media WHERE id = ?", (media_id,))
-        conn.commit()
         print("DB DELETE ATTEMPT =", media_id)
 
+    conn.commit()
     conn.close()
 
     return RedirectResponse("/admin/social/media", status_code=303)
