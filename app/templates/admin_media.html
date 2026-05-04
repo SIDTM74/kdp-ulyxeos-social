@@ -135,13 +135,15 @@
         </div>
 
       <form method="post" action="/admin/social/media/delete">
-          <input type="hidden" name="media_id" value="{{ media['id'] }}">
-          <input type="hidden" name="file_path" value="{{ media['file_path'] or '' }}">
+            <input type="hidden" name="media_id" value="{{ media['id'] }}">
+            <input type="hidden" name="file_path" value="{{ media['file_path'] or '' }}">
+            <input type="hidden" name="public_url" value="{{ media['public_url'] or '' }}">
+
           <button type="submit" class="danger"
-            onclick="return confirm('Supprimer ce média ?')">
-            🗑 Supprimer
+          onclick="return confirm('Supprimer ce média ?')">
+          🗑 Supprimer
           </button>
-      </form>
+    </form>
 
       </div>
     {% else %}
