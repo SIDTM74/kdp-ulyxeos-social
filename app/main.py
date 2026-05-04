@@ -321,7 +321,7 @@ def delete_media(request: Request, media_id: int = Form(...)):
     if not is_admin(request):
         return RedirectResponse("/admin/login", status_code=303)
 
-    conn = sqlite3.connect(MEDIA_DB)
+    conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     cur = conn.cursor()
 
