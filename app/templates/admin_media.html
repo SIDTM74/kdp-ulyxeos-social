@@ -2,119 +2,146 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Médias | KDP ULYXEOS</title>
+  <title>Médias — KDP ULYXEOS Social</title>
   <link rel="stylesheet" href="/static/style.css">
+
+  <style>
+    body {
+      background:#0f172a;
+      color:white;
+      font-family:Arial, sans-serif;
+      padding:30px;
+    }
+
+    .nav a {
+      color:#fde68a;
+      margin-right:16px;
+      font-weight:bold;
+      text-decoration:none;
+    }
+
+    .card, .item {
+      background:#111827;
+      border:1px solid #334155;
+      border-radius:18px;
+      padding:20px;
+      margin-bottom:20px;
+    }
+
+    .grid {
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+      gap:18px;
+    }
+
+    input, select {
+      width:100%;
+      padding:12px;
+      border-radius:10px;
+      border:1px solid #475569;
+      background:#020617;
+      color:white;
+      margin-top:8px;
+    }
+
+    button {
+      padding:12px 16px;
+      border:none;
+      border-radius:12px;
+      font-weight:bold;
+      cursor:pointer;
+      margin-top:10px;
+    }
+
+    .primary { background:#2563eb; color:white; }
+    .secondary { background:#334155; color:white; }
+    .danger { background:#dc2626; color:white; width:100%; }
+
+    .preview {
+      width:100%;
+      max-height:180px;
+      object-fit:cover;
+      border-radius:14px;
+      background:#020617;
+      margin-bottom:12px;
+    }
+
+    .meta {
+      color:#94a3b8;
+      font-size:13px;
+      line-height:1.5;
+      word-break:break-all;
+    }
+
+    .title {
+      font-weight:900;
+      color:#fde68a;
+      margin-bottom:8px;
+      word-break:break-all;
+    }
+  </style>
 </head>
+
 <body>
-  <div class="page">
-    <div class="topbar">
-      <div class="brand">
-        <div class="brand-title">Bibliothèque média</div>
-        <div class="brand-subtitle">Images et vidéos utilisées par le moteur d’autopost</div>
-      </div>
-      <div class="badge">🗂 Gestion des ressources</div>
-    </div>
 
-    <div class="nav">
-      <a href="/admin/social">Dashboard</a>
-      <a href="/admin/social/media">Médias</a>
-      <a href="/admin/social/history">Historique</a>
-      <a href="https://kdp-ulyxeos.com" target="_blank" rel="noopener">Retour site</a>
-      <a href="/admin/creator">Creator</a>
-    </div>
+  <div class="nav">
+    <a href="/admin/social">Dashboard</a>
+    <a href="/admin/social/media">Médias</a>
+    <a href="/admin/social/history">Historique</a>
+  </div>
 
-    <div class="card">
-      <h2>Ajouter un média</h2>
-      <form method="post" action="/admin/social/media/upload" enctype="multipart/form-data">
-        <div class="upload-grid">
-          <div>
-            <label for="file">Fichier</label>
-            <input id="file" type="file" name="file" required>
-          </div>
+  <h1>Bibliothèque médias</h1>
 
-          <div>
-            <label for="media_type">Type</label>
-            <select id="media_type" name="media_type" required>
-              <option value="image">Image</option>
-              <option value="video">Vidéo</option>
-            </select>
-          </div>
+  <div class="card">
+    <h2>Ajouter un média</h2>
 
-          <div>
-            <label for="platform_hint">Plateforme</label>
-            <select id="platform_hint" name="platform_hint">
-              <option value="all">Toutes</option>
-              <option value="facebook">Facebook</option>
-              <option value="instagram">Instagram</option>
-              <option value="tiktok">TikTok</option>
-            </select>
-          </div>
+    <form method="post" action="/admin/social/media/upload" enctype="multipart/form-data">
+      <label>Type</label>
+      <select name="media_type" required>
+        <option value="image">Image</option>
+        <option value="video">Vidéo</option>
+      </select>
 
-          <div>
-            <button type="submit">Uploader</button>
-          </div>
-        </div>
+      <label>Fichier</label>
+      <input type="file" name="file" required>
 
-        <div style="height:12px;"></div>
-
-        <div>
-          <label for="public_url">URL publique du média (recommandée pour Instagram/TikTok)</label>
-          <input id="public_url" type="url" name="public_url" placeholder="https://...">
-        </div>
-      </form>
-    </div>
-
-    <div style="height:18px;"></div>
-
-    <div class="card">
-      <h2>Liste des médias</h2>
-
-      {% if media_items and media_items|length > 0 %}
-        <div class="list">
-         {% for media in media_items %}
-  <div class="item">
-    <div class="item-title">#{{ media["id"] }} · {{ media["filename"] }}</div>
-
-    <div class="item-meta">
-      Type : {{ media["media_type"] }} ·
-      Plateforme : {{ media["platform_hint"] }} ·
-      Utilisations : {{ media["usage_count"] }}
-    </div>
-
-    <div class="item-meta">
-      Dernière utilisation : {{ media["last_used_at"] or "Jamais" }}
-    </div>
-
-    <div style="height:10px;"></div>
-
-    <form method="post" action="/admin/social/media/public-url">
-      <input type="hidden" name="media_id" value="{{ media['id'] }}">
-      <label>URL publique</label>
-      <input
-        type="url"
-        name="public_url"
-        value="{{ media['public_url'] or '' }}"
-        placeholder="https://..."
-      >
-      <div style="height:10px;"></div>
-      <button type="submit" class="btn-secondary">💾 Sauvegarder l’URL</button>
+      <button type="submit" class="primary">Ajouter le média</button>
     </form>
-<!----------------------------------------------------------------------------------->
-   <form method="post" action="/admin/social/media/delete">
-    <input type="hidden" name="media_id" value="{{ media.id }}">
-    <button type="submit" class="delete-btn"
-        onclick="return confirm('Supprimer ce média ?')">
-        🗑 Supprimer
-    </button>
-</form>
-<!------------------------------------------------------------------------------------>    
   </div>
-{% endfor %}
+
+  <h2>Médias enregistrés</h2>
+
+  <div class="grid">
+    {% for media in media_items %}
+      <div class="item">
+
+        {% if media["media_type"] == "image" %}
+          <img class="preview" src="{{ media['public_url'] }}">
+        {% else %}
+          <video class="preview" src="{{ media['public_url'] }}" controls></video>
+        {% endif %}
+
+        <div class="title">#{{ media["id"] }} — {{ media["filename"] }}</div>
+
+        <div class="meta">
+          Type : {{ media["media_type"] }}<br>
+          Date : {{ media["created_at"] }}<br>
+          URL : <a href="{{ media['public_url'] }}" target="_blank" style="color:#93c5fd;">voir</a>
         </div>
-      {% else %}
-        <div class="muted">Aucun média enregistré pour le moment.</div>
-      {% endif %}
-    </div>
+
+        <form method="post" action="/admin/social/media/delete">
+          <input type="hidden" name="media_id" value="{{ media['id'] }}">
+          <button type="submit" class="danger"
+                  onclick="return confirm('Supprimer définitivement ce média ?')">
+            🗑 Supprimer
+          </button>
+        </form>
+
+      </div>
+    {% else %}
+      <p>Aucun média enregistré.</p>
+    {% endfor %}
   </div>
+
 </body>
 </html>
