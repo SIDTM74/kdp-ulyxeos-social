@@ -318,32 +318,43 @@ async def upload_media(
 # ------------------------------------------------------------------------
 @app.post("/admin/social/media/delete")
 def delete_media(request: Request, media_id: int = Form(...)):
-    if not is_admin(request):
-        return RedirectResponse("/admin/login", status_code=303)
+    try:
+        print("DELETE MEDIA ID =", media_id)
 
-    conn = sqlite3.connect(MEDIA_DB)
-    conn.row_factory = sqlite3.Row
-    cur = conn.cursor()
+        if not is_admin(request):
+            print("DELETE ERROR = not admin")
+            return RedirectResponse("/admin/login", status_code=303)
 
-    cur.execute("SELECT * FROM media WHERE id = ?", (media_id,))
-    media = cur.fetchone()
+        conn = sqlite3.connect(MEDIA_DB)
+        conn.row_factory = sqlite3.Row
+        cur = conn.cursor()
 
-    if not media:
+        cur.execute("SELECT * FROM media WHERE id = ?", (media_id,))
+        media = cur.fetchone()
+
+        print("DELETE MEDIA FOUND =", dict(media) if media else None)
+
+        if not media:
+            conn.close()
+            return RedirectResponse("/admin/social/media", status_code=303)
+
+        file_path = media["file_path"] if "file_path" in media.keys() else None
+        print("DELETE FILE PATH =", file_path)
+
+        if file_path and os.path.exists(file_path):
+            os.remove(file_path)
+            print("DELETE FILE OK")
+
+        cur.execute("DELETE FROM media WHERE id = ?", (media_id,))
+        conn.commit()
         conn.close()
+
+        print("DELETE DB OK")
         return RedirectResponse("/admin/social/media", status_code=303)
 
-    file_path = media["file_path"] if "file_path" in media.keys() else None
-
-    if file_path and os.path.exists(file_path):
-        os.remove(file_path)
-
-    cur.execute("DELETE FROM media WHERE id = ?", (media_id,))
-    conn.commit()
-    conn.close()
-
-    return RedirectResponse("/admin/social/media", status_code=303)
-    
-
+    except Exception as e:
+        print("DELETE MEDIA ERROR =", repr(e))
+        return HTMLResponse(f"Erreur suppression média : {e}", status_code=500)
 
 # -------------------------------------------------
 
