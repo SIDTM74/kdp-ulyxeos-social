@@ -249,7 +249,7 @@ def admin_media_page():
         </div>
 
         <h2>Médias enregistrés</h2>
-
+        
         <div class="grid">
             {rows if rows else "<p>Aucun média enregistré.</p>"}
         </div>
@@ -317,33 +317,31 @@ async def upload_media(
 # ================= /admin/social/media/delete ===========================
 # ------------------------------------------------------------------------
 @app.post("/admin/social/media/delete")
-def delete_media(media_id: int = Form(...)):
-    print("DELETE MEDIA ID =", media_id)
+def delete_media(request: Request, media_id: int = Form(...)):
+    if not is_admin(request):
+        return RedirectResponse("/admin/login", status_code=303)
 
     conn = sqlite3.connect(MEDIA_DB)
-    c = conn.cursor()
+    conn.row_factory = sqlite3.Row
+    cur = conn.cursor()
 
-    c.execute("SELECT file_path FROM media WHERE id = ?", (media_id,))
-    result = c.fetchone()
+    cur.execute("SELECT * FROM media WHERE id = ?", (media_id,))
+    media = cur.fetchone()
 
-    print("DELETE RESULT =", result)
+    if not media:
+        conn.close()
+        return RedirectResponse("/admin/social/media", status_code=303)
 
-    if result:
-        file_path = result[0]
+    file_path = media["file_path"] if "file_path" in media.keys() else None
 
-        print("FILE PATH =", file_path)
-        print("FILE EXISTS =", os.path.exists(file_path))
+    if file_path and os.path.exists(file_path):
+        os.remove(file_path)
 
-        if os.path.exists(file_path):
-            os.remove(file_path)
-
-        c.execute("DELETE FROM media WHERE id = ?", (media_id,))
-        conn.commit()
-
+    cur.execute("DELETE FROM media WHERE id = ?", (media_id,))
+    conn.commit()
     conn.close()
 
-    return RedirectResponse("/admin/social/media", status_code=303)
-# -------------------------------------------------
+    return RedirectResponse("/admin/social/media", status_code=303)# -------------------------------------------------
 
 # -------------------------------------------------
 
