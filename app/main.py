@@ -317,40 +317,31 @@ async def upload_media(
 # ------------------------------------------------------------------------
 @app.post("/admin/social/media/delete")
 def delete_media(media_id: int = Form(...)):
-    try:
-        print("DELETE MEDIA ID =", media_id)
+    print("SUPPRIMER L’ID MÉDIA =", media_id)
+    print("MEDIA_DB UTILISÉ =", MEDIA_DB)
 
-        conn = sqlite3.connect(MEDIA_DB)
-        conn.row_factory = sqlite3.Row
-        cur = conn.cursor()
+    conn = sqlite3.connect(MEDIA_DB)
+    c = conn.cursor()
 
-        cur.execute("SELECT * FROM media WHERE id = ?", (media_id,))
-        media = cur.fetchone()
+    c.execute("SELECT id, filename, file_path FROM media WHERE id = ?", (media_id,))
+    media = c.fetchone()
 
-        print("MEDIA FOUND =", dict(media) if media else None)
+    print("MÉDIA TROUVÉ =", media)
 
-        if not media:
-            conn.close()
-            return RedirectResponse("/admin/social/media", status_code=303)
-
-        file_path = media["file_path"] if "file_path" in media.keys() else None
-        print("FILE PATH =", file_path)
+    if media:
+        media_id_db, filename, file_path = media
 
         if file_path and os.path.exists(file_path):
             os.remove(file_path)
-            print("FILE DELETED")
+            print("FICHIER SUPPRIMÉ =", file_path)
 
-        cur.execute("DELETE FROM media WHERE id = ?", (media_id,))
+        c.execute("DELETE FROM media WHERE id = ?", (media_id,))
         conn.commit()
-        conn.close()
+        print("LIGNE DB SUPPRIMÉE =", media_id)
 
-        print("DB DELETED")
+    conn.close()
 
-        return RedirectResponse("/admin/social/media", status_code=303)
-
-    except Exception as e:
-        print("DELETE MEDIA ERROR =", repr(e))
-        return HTMLResponse(f"Erreur suppression média : {e}", status_code=500)
+    return RedirectResponse("/admin/social/media", status_code=303)
 
 # -------------------------------------------------
 @app.get("/debug/media-db")
