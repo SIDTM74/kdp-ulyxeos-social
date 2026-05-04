@@ -85,11 +85,6 @@ def health():
 # ---------------------------------------------------------
 # ================ /admin/social/media ====================
 # ---------------------------------------------------------
-from fastapi.templating import Jinja2Templates
-from fastapi import Request
-
-templates = Jinja2Templates(directory="templates")
-
 @app.get("/admin/social/media", response_class=HTMLResponse)
 def admin_media_page(request: Request):
     conn = sqlite3.connect(MEDIA_DB)
@@ -102,19 +97,32 @@ def admin_media_page(request: Request):
         ORDER BY id DESC
     """)
 
-    medias = c.fetchall()
-    
-    print("ADMIN MEDIA DB =", MEDIA_DB)
-    print("ADMIN MEDIA COUNT =", len(medias))
-    print("ADMIN MEDIA IDS =", [m[0] for m in medias[:10]])
-   
+    rows = c.fetchall()
+
+    media_items = []
+
+    for row in rows:
+        media = dict(row)
+
+        real_path = media.get("file_path") or ""
+        if not real_path:
+            real_path = get_file_path_from_public_url(media.get("public_url", ""))
+
+        if real_path and os.path.exists(real_path):
+            media["file_path"] = real_path
+            media_items.append(media)
+        else:
+            # supprime automatiquement les médias fantômes
+            c.execute("DELETE FROM media WHERE id = ?", (media["id"],))
+
+    conn.commit()
     conn.close()
 
     return templates.TemplateResponse(
         "admin_media.html",
         {
             "request": request,
-            "media_items": medias
+            "media_items": media_items
         }
     )
 # ---------------------------------------------------------
@@ -182,27 +190,11 @@ def delete_media(
     file_path: str = Form(""),
     public_url: str = Form("")
 ):
-    print("DELETE MEDIA ID =", media_id)
-    print("DELETE PUBLIC URL =", public_url)
-
-    if not file_path and public_url:
-        if "/media/images/" in public_url:
-            filename = public_url.split("/media/images/")[-1]
-            filename = unquote(filename)
-            file_path = os.path.join(IMAGE_DIR, filename)
-
-        elif "/media/videos/" in public_url:
-            filename = public_url.split("/media/videos/")[-1]
-            filename = unquote(filename)
-            file_path = os.path.join(VIDEO_DIR, filename)
-
-    print("FINAL FILE PATH =", file_path)
+    if not file_path:
+        file_path = get_file_path_from_public_url(public_url)
 
     if file_path and os.path.exists(file_path):
         os.remove(file_path)
-        print("FILE DELETED =", file_path)
-    else:
-        print("FILE NOT FOUND =", file_path)
 
     conn = sqlite3.connect(MEDIA_DB)
     cur = conn.cursor()
@@ -234,6 +226,18 @@ def debug_media_db():
         "items": [dict(row) for row in rows]
     }
 # -------------------------------------------------
+def get_file_path_from_public_url(public_url: str):
+    if not public_url:
+        return ""
 
+    if "/media/images/" in public_url:
+        filename = public_url.split("/media/images/")[-1]
+        return os.path.join(IMAGE_DIR, unquote(filename))
+
+    if "/media/videos/" in public_url:
+        filename = public_url.split("/media/videos/")[-1]
+        return os.path.join(VIDEO_DIR, unquote(filename))
+
+    return ""
 # -------------------------------------------------
 
