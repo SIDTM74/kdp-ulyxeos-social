@@ -90,8 +90,7 @@ def admin_media_page():
     c = conn.cursor()
 
     c.execute("""
-        SELECT id, filename, media_type, public_url, file_path, created_at
-        FROM media
+        SELECT id, filename, media_type, public_url, file_path, created_at FROM media
         ORDER BY id DESC
     """)
 
