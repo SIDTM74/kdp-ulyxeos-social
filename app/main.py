@@ -5,6 +5,7 @@ import time
 from fastapi import UploadFile, File, Form, Request
 from fastapi.responses import RedirectResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
+from urllib.parse import unquote
 
 # Routers existants
 from app.social.router_admin import router as admin_router
@@ -182,17 +183,17 @@ def delete_media(
     public_url: str = Form("")
 ):
     print("DELETE MEDIA ID =", media_id)
-    print("DELETE FILE PATH =", file_path)
     print("DELETE PUBLIC URL =", public_url)
 
-    # Si file_path est vide, on le reconstruit depuis public_url
     if not file_path and public_url:
         if "/media/images/" in public_url:
             filename = public_url.split("/media/images/")[-1]
+            filename = unquote(filename)
             file_path = os.path.join(IMAGE_DIR, filename)
 
         elif "/media/videos/" in public_url:
             filename = public_url.split("/media/videos/")[-1]
+            filename = unquote(filename)
             file_path = os.path.join(VIDEO_DIR, filename)
 
     print("FINAL FILE PATH =", file_path)
@@ -200,13 +201,17 @@ def delete_media(
     if file_path and os.path.exists(file_path):
         os.remove(file_path)
         print("FILE DELETED =", file_path)
+    else:
+        print("FILE NOT FOUND =", file_path)
 
     conn = sqlite3.connect(MEDIA_DB)
     cur = conn.cursor()
 
     if media_id:
         cur.execute("DELETE FROM media WHERE id = ?", (media_id,))
-        print("DB DELETE ATTEMPT =", media_id)
+
+    if public_url:
+        cur.execute("DELETE FROM media WHERE public_url = ?", (public_url,))
 
     conn.commit()
     conn.close()
