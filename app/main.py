@@ -138,10 +138,9 @@ from urllib.parse import quote
 # =================================================
 
 
-@app.get("/admin/social/media", response_class=HTMLResponse)
-def admin_media_page():
-    html = """
-    <
+@app.get("/admin/social/media")
+def admin_social_media():
+    return RedirectResponse("/admin/social/media-clean", status_code=302)
       
 # =================================================
 # ==================================================
