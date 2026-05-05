@@ -85,41 +85,44 @@ def health():
 # ---------------------------------------------------------
 # ================ /admin/social/media ====================
 # ---------------------------------------------------------
+from urllib.parse import quote
+
 @app.get("/admin/social/media", response_class=HTMLResponse)
 def admin_media_page(request: Request):
-    conn = sqlite3.connect(MEDIA_DB)
-    conn.row_factory = sqlite3.Row
-    c = conn.cursor()
-
-    c.execute("""
-        SELECT id, filename, media_type, public_url, file_path, created_at
-        FROM media
-        ORDER BY id DESC
-    """)
-
-    rows = c.fetchall()
     media_items = []
+    item_id = 1
 
-    for row in rows:
-        media = dict(row)
+    for filename in os.listdir(IMAGE_DIR):
+        file_path = os.path.join(IMAGE_DIR, filename)
+        if os.path.isfile(file_path):
+            media_items.append({
+                "id": item_id,
+                "filename": filename,
+                "media_type": "image",
+                "public_url": f"{BASE_URL}/media/images/{quote(filename)}",
+                "file_path": file_path,
+                "created_at": time.strftime(
+                    "%Y-%m-%d %H:%M:%S",
+                    time.localtime(os.path.getmtime(file_path))
+                )
+            })
+            item_id += 1
 
-        public_url = media.get("public_url") or ""
-        file_path = media.get("file_path") or ""
-
-        if not file_path:
-            file_path = get_file_path_from_public_url(public_url)
-
-        file_exists = bool(file_path and os.path.exists(file_path))
-
-        if file_exists:
-            media["file_path"] = file_path
-            media_items.append(media)
-        else:
-            print("MEDIA FANTOME SUPPRIMÉ =", media.get("id"), media.get("filename"))
-            c.execute("DELETE FROM media WHERE id = ?", (media["id"],))
-
-    conn.commit()
-    conn.close()
+    for filename in os.listdir(VIDEO_DIR):
+        file_path = os.path.join(VIDEO_DIR, filename)
+        if os.path.isfile(file_path):
+            media_items.append({
+                "id": item_id,
+                "filename": filename,
+                "media_type": "video",
+                "public_url": f"{BASE_URL}/media/videos/{quote(filename)}",
+                "file_path": file_path,
+                "created_at": time.strftime(
+                    "%Y-%m-%d %H:%M:%S",
+                    time.localtime(os.path.getmtime(file_path))
+                )
+            })
+            item_id += 1
 
     return templates.TemplateResponse(
         "admin_media.html",
