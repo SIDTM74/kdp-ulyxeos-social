@@ -191,12 +191,12 @@ async def upload_media(
 # ================= /admin/social/media/delete ===========================
 # ------------------------------------------------------------------------
 @app.post("/admin/social/media/delete")
-def delete_media(file_path: str = Form(...)):
+def delete_media(file_path: str = Form("")):
     print("DELETE FILE PATH =", file_path)
 
-    if os.path.exists(file_path):
+    if file_path and os.path.exists(file_path):
         os.remove(file_path)
-        print("FILE DELETED")
+        print("FILE DELETED =", file_path)
 
     return RedirectResponse("/admin/social/media-clean", status_code=303)
 # -------------------------------------------------
