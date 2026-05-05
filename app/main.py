@@ -81,10 +81,11 @@ def root():
 @app.get("/health")
 def health():
     return {"status": "ok"}
-
-# ---------------------------------------------------------
-# ================ /admin/social/media ====================
-# ---------------------------------------------------------
+# ======================================================
+# =======================================================
+# ========= / A D M I N / S O C I A L / M E D I A =========
+# =======================================================
+# ======================================================
 from urllib.parse import quote
 
 # @app.get("/admin/social/media", response_class=HTMLResponse)
@@ -131,48 +132,17 @@ from urllib.parse import quote
 #             "media_items": media_items
 #         }
 #     )
-# +++++++++++++++++++++++++++++++++++++++++++++++++
-# -------------------------------------------------
+
+# =================================================
+# ==================================================
 # =================================================
 
  @app.get("/admin/social/media")
- def admin_social_media_redirect():
-  media_items = []
-     item_id = 1
-      for filename in os.listdir(IMAGE_DIR):
-         file_path = os.path.join(IMAGE_DIR, filename)
-         if os.path.isfile(file_path):
-             media_items.append({
-                "id": item_id,
-                 "filename": filename,
-                 "media_type": "image",
-                 "public_url": f"{BASE_URL}/media/images/{quote(filename)}",
-                 "file_path": file_path,
-                 "created_at": time.strftime(
-                     "%Y-%m-%d %H:%M:%S",
-                     time.localtime(os.path.getmtime(file_path))
-                 )
-             })
-             item_id += 1
- 
-     for filename in os.listdir(VIDEO_DIR):
-         file_path = os.path.join(VIDEO_DIR, filename)
-         if os.path.isfile(file_path):
-             media_items.append({
-                 "id": item_id,
-                 "filename": filename,
-                 "media_type": "video",
-                 "public_url": f"{BASE_URL}/media/videos/{quote(filename)}",
-                 "file_path": file_path,
-                 "created_at": time.strftime(
-                     "%Y-%m-%d %H:%M:%S",
-                     time.localtime(os.path.getmtime(file_path))
-                 )
-             })
-             item_id += 1
+  def admin_social_media_redirect():
     return RedirectResponse("/admin/social/media-clean", status_code=303)
-# -------------------------------------------------
-# +++++++++++++++++++++++++++++++++++++++++++++++++
+      
+# =================================================
+# ==================================================
 # =================================================
 
 # ---------------------------------------------------------
