@@ -299,9 +299,41 @@ def admin_media_clean():
                 </select>
 
                 <label>Fichier</label>
-                <input type="file" name="file" required>
+                
+<label for="mediaFile" style="
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    width:100%;
+    padding:18px;
+    margin-top:10px;
+    border-radius:14px;
+    border:2px dashed #475569;
+    background:#020617;
+    color:#cbd5e1;
+    font-weight:700;
+    cursor:pointer;
+">
+    📁 Choisir un fichier média
+</label>
 
-                <button class="upload" type="submit">Ajouter le média</button>
+<input id="mediaFile" type="file" name="file" required style="display:none;">
+<div id="selectedFileName" style="
+    margin-top:10px;
+    color:#94a3b8;
+    font-size:13px;
+">
+    Aucun fichier sélectionné
+</div>
+
+<script>
+document.getElementById("mediaFile").addEventListener("change", function() {
+    const name = this.files.length ? this.files[0].name : "Aucun fichier sélectionné";
+    document.getElementById("selectedFileName").innerText = name;
+});
+</script>           
+            
             </form>
         </div>
 
