@@ -304,6 +304,8 @@ def admin_media_clean():
     html = """
     <html>
     <head>
+        <link rel="icon" type="image/png" href="/static/favicon.png">
+        <link rel="apple-touch-icon" href="/static/favicon.png">
         <meta charset="utf-8">
         <title>Médias Clean</title>
         <style>
