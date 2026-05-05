@@ -266,7 +266,7 @@ def admin_media_clean():
         </style>
     </head>
     <body>
-        <h1>Bibliothèque médias — Clean</h1>
+        <h1>Bibliothèque médias — Gestion</h1>
         <p><a href="/admin/social">← Retour dashboard</a></p>
 
         <div class="card">
