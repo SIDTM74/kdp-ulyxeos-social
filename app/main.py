@@ -191,30 +191,14 @@ async def upload_media(
 # ================= /admin/social/media/delete ===========================
 # ------------------------------------------------------------------------
 @app.post("/admin/social/media/delete")
-def delete_media(
-    media_id: int = Form(None),
-    file_path: str = Form(""),
-    public_url: str = Form("")
-):
-    if not file_path:
-        file_path = get_file_path_from_public_url(public_url)
+def delete_media(file_path: str = Form(...)):
+    print("DELETE FILE PATH =", file_path)
 
-    if file_path and os.path.exists(file_path):
+    if os.path.exists(file_path):
         os.remove(file_path)
+        print("FILE DELETED")
 
-    conn = sqlite3.connect(MEDIA_DB)
-    cur = conn.cursor()
-
-    if media_id:
-        cur.execute("DELETE FROM media WHERE id = ?", (media_id,))
-
-    if public_url:
-        cur.execute("DELETE FROM media WHERE public_url = ?", (public_url,))
-
-    conn.commit()
-    conn.close()
-
-    return RedirectResponse("/admin/social/media", status_code=303)
+    return RedirectResponse("/admin/social/media-clean", status_code=303)
 # -------------------------------------------------
 @app.get("/debug/media-db")
 def debug_media_db():
@@ -246,28 +230,33 @@ def get_file_path_from_public_url(public_url: str):
 
     return ""
 # -------------------------------------------------
-@app.get("/admin/social/media/clean")
-def clean_missing_media():
-    conn = sqlite3.connect(MEDIA_DB)
-    conn.row_factory = sqlite3.Row
-    cur = conn.cursor()
+@app.get("/admin/social/media-clean", response_class=HTMLResponse)
+def admin_media_clean(request: Request):
+    media_items = []
 
-    cur.execute("SELECT id, public_url, file_path FROM media")
-    rows = cur.fetchall()
+    for filename in os.listdir(IMAGE_DIR):
+        file_path = os.path.join(IMAGE_DIR, filename)
+        if os.path.isfile(file_path):
+            media_items.append({
+                "filename": filename,
+                "media_type": "image",
+                "public_url": f"/media/images/{filename}",
+                "file_path": file_path,
+            })
 
-    deleted = []
+    for filename in os.listdir(VIDEO_DIR):
+        file_path = os.path.join(VIDEO_DIR, filename)
+        if os.path.isfile(file_path):
+            media_items.append({
+                "filename": filename,
+                "media_type": "video",
+                "public_url": f"/media/videos/{filename}",
+                "file_path": file_path,
+            })
 
-    for row in rows:
-        media_id = row["id"]
-        file_path = row["file_path"] or get_file_path_from_public_url(row["public_url"])
-
-        if not file_path or not os.path.exists(file_path):
-            cur.execute("DELETE FROM media WHERE id = ?", (media_id,))
-            deleted.append(media_id)
-
-    conn.commit()
-    conn.close()
-
-    return {"deleted": deleted, "count": len(deleted)}
+    return templates.TemplateResponse(
+        "admin_media.html",
+        {"request": request, "media_items": media_items}
+    )
 # -------------------------------------------------
 
