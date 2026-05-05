@@ -98,21 +98,24 @@ def admin_media_page(request: Request):
     """)
 
     rows = c.fetchall()
-
     media_items = []
 
     for row in rows:
         media = dict(row)
 
-        real_path = media.get("file_path") or ""
-        if not real_path:
-            real_path = get_file_path_from_public_url(media.get("public_url", ""))
+        public_url = media.get("public_url") or ""
+        file_path = media.get("file_path") or ""
 
-        if real_path and os.path.exists(real_path):
-            media["file_path"] = real_path
+        if not file_path:
+            file_path = get_file_path_from_public_url(public_url)
+
+        file_exists = bool(file_path and os.path.exists(file_path))
+
+        if file_exists:
+            media["file_path"] = file_path
             media_items.append(media)
         else:
-            # supprime automatiquement les médias fantômes
+            print("MEDIA FANTOME SUPPRIMÉ =", media.get("id"), media.get("filename"))
             c.execute("DELETE FROM media WHERE id = ?", (media["id"],))
 
     conn.commit()
