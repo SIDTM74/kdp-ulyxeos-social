@@ -18,7 +18,7 @@ templates = Jinja2Templates(directory="app/templates")
 router = APIRouter(tags=["admin-social"])
 
 
-@router.("/admin/login", response_class=HTMLResponse)
+@router.get("/admin/login", response_class=HTMLResponse)
 def admin_login_page(request: Request):
     return templates.TemplateResponse(
         request,
