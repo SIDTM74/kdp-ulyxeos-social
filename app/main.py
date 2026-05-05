@@ -256,15 +256,36 @@ def admin_media_clean():
         <style>
             body { font-family:Arial; background:#0f172a; color:white; padding:30px; }
             .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:18px; }
-            .card { background:#111827; border:1px solid #334155; border-radius:16px; padding:16px; }
+            .card { background:#111827; border:1px solid #334155; border-radius:16px; padding:16px; margin-bottom:20px; }
             img, video { width:100%; max-height:180px; object-fit:cover; border-radius:12px; }
-            button { width:100%; margin-top:12px; padding:12px; border:0; border-radius:10px; background:#dc2626; color:white; font-weight:bold; cursor:pointer; }
+            input, select { width:100%; padding:12px; border-radius:10px; border:1px solid #475569; background:#020617; color:white; margin:8px 0; }
+            button { width:100%; margin-top:12px; padding:12px; border:0; border-radius:10px; color:white; font-weight:bold; cursor:pointer; }
+            .upload { background:#2563eb; }
+            .delete { background:#dc2626; }
             a { color:#fde68a; }
         </style>
     </head>
     <body>
         <h1>Bibliothèque médias — Clean</h1>
         <p><a href="/admin/social">← Retour dashboard</a></p>
+
+        <div class="card">
+            <h2>Ajouter un média</h2>
+            <form method="post" action="/admin/social/media/upload" enctype="multipart/form-data">
+                <label>Type</label>
+                <select name="media_type" required>
+                    <option value="image">Image</option>
+                    <option value="video">Vidéo</option>
+                </select>
+
+                <label>Fichier</label>
+                <input type="file" name="file" required>
+
+                <button class="upload" type="submit">Ajouter le média</button>
+            </form>
+        </div>
+
+        <h2>Médias enregistrés</h2>
         <div class="grid">
     """
 
@@ -276,14 +297,12 @@ def admin_media_clean():
             <div class="card">
                 <img src="{url}">
                 <h3>{filename}</h3>
-            
-    <form method="post" action="/admin/social/media/delete-clean">
-        <Input type="hidden" name="file_path" value="{file_path}">
-            <button type="submit" onclick="return confirm('Supprimer ce média ?')">🗑 Supprimer</button>
-    </form>
-    
-   </div>
-   """
+                <form method="post" action="/admin/social/media/delete-clean">
+                    <input type="hidden" name="file_path" value="{file_path}">
+                    <button class="delete" type="submit" onclick="return confirm('Supprimer ce média ?')">🗑 Supprimer</button>
+                </form>
+            </div>
+            """
 
     for filename in os.listdir(VIDEO_DIR):
         file_path = os.path.join(VIDEO_DIR, filename)
@@ -295,7 +314,7 @@ def admin_media_clean():
                 <h3>{filename}</h3>
                 <form method="post" action="/admin/social/media/delete-clean">
                     <input type="hidden" name="file_path" value="{file_path}">
-                    <button type="submit" onclick="return confirm('Supprimer ce média ?')">🗑 Supprimer</button>
+                    <button class="delete" type="submit" onclick="return confirm('Supprimer ce média ?')">🗑 Supprimer</button>
                 </form>
             </div>
             """
