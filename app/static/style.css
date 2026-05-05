@@ -147,6 +147,14 @@ a {
     letter-spacing: -0.02em;
 }
 
+.card h3 {
+    font-size: 12px;
+    line-height: 1.35;
+    color: #cbd5e1;
+    word-break: break-all;
+    font-weight: 600;
+}
+
 .kpi-label {
     color: var(--muted);
     font-size: 13px;
