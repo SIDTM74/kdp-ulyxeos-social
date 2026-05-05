@@ -74,18 +74,22 @@ app.include_router(internal_router)
 def root():
     return RedirectResponse(url="/admin/social")
 
-# --------------------------------------------------
-# 🧪 ROUTE TEST (optionnel)
-# --------------------------------------------------
+# xxxxx===============================================-----
+# xxxxxx======== 🧪 ROUTE TEST (optionnel) ============-----
+# xxxxx===============================================-----
 
 @app.get("/health")
 def health():
     return {"status": "ok"}
-# ======================================================
-# =======================================================
-# ========= / A D M I N / S O C I A L / M E D I A =========
-# =======================================================
-# ======================================================
+
+# xxx=============================================------
+# xxxx==============================================------
+# xxxxx===============================================-----
+# xxxxxx========== /ADMIN/SOCIAL/MEDIA ================-----
+# xxxxx===============================================-----
+# xxxx==============================================-----
+# xxx=============================================-----
+
 from urllib.parse import quote
 
 # @app.get("/admin/social/media", response_class=HTMLResponse)
@@ -203,9 +207,15 @@ async def upload_media(
     conn.close()
 
     return RedirectResponse("/admin/social/media", status_code=303)
-# ------------------------------------------------------------------------
-# ================= /admin/social/media/delete ===========================
-# ------------------------------------------------------------------------
+
+# xxx=============================================------
+# xxxx==============================================------
+# xxxxx===============================================-----
+# xxxxxx===== /admin/social/media/delete ==============-----
+# xxxxx===============================================-----
+# xxxx==============================================-----
+# xxx=============================================-----
+
 @app.post("/admin/social/media/delete-clean")
 def delete_media_clean(file_path: str = Form("")):
     print("DELETE CLEAN FILE PATH =", file_path)
@@ -215,7 +225,15 @@ def delete_media_clean(file_path: str = Form("")):
         print("DELETE CLEAN OK")
 
     return RedirectResponse("/admin/social/media-clean", status_code=303)
-# -------------------------------------------------
+
+# xxx=============================================------
+# xxxx==============================================------
+# xxxxx===============================================-----
+# xxxxxx========== /debug/media-db ====================-----
+# xxxxx===============================================-----
+# xxxx==============================================-----
+# xxx=============================================-----
+
 @app.get("/debug/media-db")
 def debug_media_db():
     conn = sqlite3.connect(MEDIA_DB)
@@ -231,7 +249,7 @@ def debug_media_db():
         "count": len(rows),
         "items": [dict(row) for row in rows]
     }
-# -------------------------------------------------
+# ================================================================
 def get_file_path_from_public_url(public_url: str):
     if not public_url:
         return ""
@@ -245,7 +263,15 @@ def get_file_path_from_public_url(public_url: str):
         return os.path.join(VIDEO_DIR, unquote(filename))
 
     return ""
-# -------------------------------------------------
+
+# xxx=============================================------
+# xxxx==============================================------
+# xxxxx===============================================-----
+# xxxxxx===== /admin/social/media-clean ===============-----
+# xxxxx===============================================-----
+# xxxx==============================================-----
+# xxx=============================================-----
+
 @app.get("/admin/social/media-clean", response_class=HTMLResponse)
 def admin_media_clean():
     html = """
@@ -327,15 +353,19 @@ def admin_media_clean():
     Aucun fichier sélectionné
 </div>
 
+<button class="upload" type="submit">
+    ✅ Ajouter le média
+</button>
+
 <script>
 document.getElementById("mediaFile").addEventListener("change", function() {
     const name = this.files.length ? this.files[0].name : "Aucun fichier sélectionné";
     document.getElementById("selectedFileName").innerText = name;
 });
-</script>           
-            
-            </form>
-        </div>
+</script>
+
+</form>
+    </div>
 
         <h2>Médias enregistrés</h2>
         <div class="grid">
