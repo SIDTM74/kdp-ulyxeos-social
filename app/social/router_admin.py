@@ -18,7 +18,7 @@ templates = Jinja2Templates(directory="app/templates")
 router = APIRouter(tags=["admin-social"])
 
 
-@router.get("/admin/login", response_class=HTMLResponse)
+@router.("/admin/login", response_class=HTMLResponse)
 def admin_login_page(request: Request):
     return templates.TemplateResponse(
         request,
@@ -53,7 +53,7 @@ def admin_login(request: Request, email: str = Form(...), password: str = Form(.
     return response
 
 
-("/admin/social", response_class=HTMLResponse)
+@router.get("/admin/social", response_class=HTMLResponse)
 def admin_social_dashboard(request: Request):
     if not is_admin_authenticated(request):
         return RedirectResponse("/admin/login", status_code=303)
@@ -189,6 +189,9 @@ def update_social_settings(
 
     return RedirectResponse("/admin/social", status_code=303)
 
+# ===============================================================================
+# ===============================================================================
+# ===============================================================================
 
 @router.get("/admin/social/media", response_class=HTMLResponse)
 def admin_media_page(request: Request):
@@ -196,7 +199,10 @@ def admin_media_page(request: Request):
         return RedirectResponse("/admin/login", status_code=303)
 
     return RedirectResponse("/admin/social/media-clean", status_code=302)
-
+    
+# ===============================================================================
+# ===============================================================================
+# ===============================================================================
 @router.post("/admin/social/media/upload")
 def upload_media(
     request: Request,
