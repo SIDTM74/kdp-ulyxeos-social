@@ -53,7 +53,7 @@ def admin_login(request: Request, email: str = Form(...), password: str = Form(.
     return response
 
 
-@router.get("/admin/social", response_class=HTMLResponse)
+("/admin/social", response_class=HTMLResponse)
 def admin_social_dashboard(request: Request):
     if not is_admin_authenticated(request):
         return RedirectResponse("/admin/login", status_code=303)
@@ -195,20 +195,7 @@ def admin_media_page(request: Request):
     if not is_admin_authenticated(request):
         return RedirectResponse("/admin/login", status_code=303)
 
-    conn = get_db()
-    cur = conn.cursor()
-    cur.execute("SELECT * FROM social_media ORDER BY id DESC")
-    media_items = cur.fetchall()
-    conn.close()
-
-    return templates.TemplateResponse(
-        request,
-        "admin_media.html",
-        {
-            "media_items": media_items
-        }
-    )
-
+    return RedirectResponse("/admin/social/media-clean", status_code=302)
 
 @router.post("/admin/social/media/upload")
 def upload_media(
