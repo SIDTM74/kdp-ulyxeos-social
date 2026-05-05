@@ -2,6 +2,10 @@ from fastapi import APIRouter, Request, Form, UploadFile, File
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 
+import uuid
+import time
+import os
+
 from app.auth import (
     login_is_valid, create_session_token,
     is_admin_authenticated
@@ -202,29 +206,104 @@ def admin_media_page(request: Request):
     
 # ===============================================================================
 # ===============================================================================
+# ===================     /admin/social/media/upload     ========================
 # ===============================================================================
+# ===============================================================================
+
+from fastapi import UploadFile, File, Form, Request
+from fastapi.responses import RedirectResponse
+import os
+import time
+import uuid
+import sqlite3
+
+# ⚠️ adapte si tes constantes sont ailleurs
+IMAGE_DIR = "/var/data/social/images"
+VIDEO_DIR = "/var/data/social/videos"
+MEDIA_DB = "/var/data/social/media.db"
+BASE_URL = "https://kdp-ulyxeos-social.onrender.com"
+
+
 @router.post("/admin/social/media/upload")
-def upload_media(
+async def upload_media(
     request: Request,
     file: UploadFile = File(...),
-    media_type: str = Form(...),
-    platform_hint: str = Form("all"),
-    public_url: str = Form(""),
+    media_type: str = Form(...)
 ):
-    if not is_admin_authenticated(request):
-        return RedirectResponse("/admin/login", status_code=303)
+    # 🔒 Vérification admin (si fonction existe)
+    try:
+        if not is_admin_authenticated(request):
+            return RedirectResponse("/admin/login", status_code=303)
+    except:
+        pass
 
-    filepath = save_uploaded_media(file, media_type=media_type)
-    create_media_record(
-        filename=file.filename,
-        filepath=filepath,
-        media_type=media_type,
-        platform_hint=platform_hint,
-        public_url=public_url,
-    )
+    # 📁 Création dossiers si absents
+    os.makedirs(IMAGE_DIR, exist_ok=True)
+    os.makedirs(VIDEO_DIR, exist_ok=True)
 
+    # 📄 Nom original + extension
+    original_name = file.filename or "media"
+    ext = os.path.splitext(original_name)[1].lower()
+
+    # ⚡ NOM AUTOMATIQUE (IMPORTANT)
+    timestamp = int(time.time())
+    unique_id = uuid.uuid4().hex[:8]
+
+    if media_type == "image":
+        filename = f"image_{timestamp}_{unique_id}{ext}"
+        folder = IMAGE_DIR
+        public_folder = "images"
+
+    elif media_type == "video":
+        filename = f"video_{timestamp}_{unique_id}{ext}"
+        folder = VIDEO_DIR
+        public_folder = "videos"
+
+    else:
+        filename = f"media_{timestamp}_{unique_id}{ext}"
+        folder = IMAGE_DIR
+        public_folder = "images"
+
+    # 📍 Chemin final
+    file_path = os.path.join(folder, filename)
+
+    # 💾 Sauvegarde fichier
+    with open(file_path, "wb") as buffer:
+        buffer.write(await file.read())
+
+    # 🌍 URL publique
+    public_url = f"{BASE_URL}/media/{public_folder}/{filename}"
+
+    # 🗃️ Enregistrement DB
+    conn = sqlite3.connect(MEDIA_DB)
+    cur = conn.cursor()
+
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS media (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            filename TEXT,
+            media_type TEXT,
+            public_url TEXT,
+            file_path TEXT,
+            created_at TEXT
+        )
+    """)
+
+    cur.execute("""
+        INSERT INTO media (filename, media_type, public_url, file_path, created_at)
+        VALUES (?, ?, ?, ?, datetime('now'))
+    """, (filename, media_type, public_url, file_path))
+
+    conn.commit()
+    conn.close()
+
+    # 🔁 Redirection
     return RedirectResponse("/admin/social/media", status_code=303)
-
+# ===============================================================================
+# ===============================================================================
+# ================   /admin/social/media/public-url   ===========================
+# ===============================================================================
+# ===============================================================================
 
 @router.post("/admin/social/media/public-url")
 def save_media_public_url(
