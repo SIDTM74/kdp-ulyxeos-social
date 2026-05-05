@@ -267,7 +267,27 @@ def admin_media_clean():
     </head>
     <body>
         <h1>Bibliothèque médias — Gestion</h1>
-        <p><a href="/admin/social">← Retour dashboard</a></p>
+       <div style="margin-bottom:20px;">
+    <a href="/admin/social" style="
+        display:inline-flex;
+        align-items:center;
+        gap:10px;
+        padding:12px 18px;
+        border-radius:12px;
+        background:linear-gradient(135deg,#2563eb,#1d4ed8);
+        color:white;
+        text-decoration:none;
+        font-weight:700;
+        font-size:14px;
+        box-shadow:0 8px 20px rgba(37,99,235,0.3);
+        transition:all 0.2s ease;
+    "
+    onmouseover="this.style.transform='translateY(-2px)'"
+    onmouseout="this.style.transform='translateY(0px)'"
+    >
+        📊 Retour au Dashboard
+    </a>
+</div>
 
         <div class="card">
             <h2>Ajouter un média</h2>
