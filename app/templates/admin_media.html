@@ -117,7 +117,8 @@
   <h2>Médias enregistrés</h2>
 
   <div class="grid">
-    {% for media in media_items %}
+   {% for media in media_items %}
+     {% if media["public_url"] %}
       <div class="item">
 
         {% if media["media_type"] == "image" %}
@@ -148,6 +149,7 @@
       </div>
     {% else %}
       <p>Aucun média enregistré.</p>
+        {% endif %}
     {% endfor %}
   </div>
 
