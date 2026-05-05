@@ -190,13 +190,13 @@ async def upload_media(
 # ------------------------------------------------------------------------
 # ================= /admin/social/media/delete ===========================
 # ------------------------------------------------------------------------
-@app.post("/admin/social/media/delete")
-def delete_media(file_path: str = Form("")):
-    print("DELETE FILE PATH =", file_path)
+@app.post("/admin/social/media/delete-clean")
+def delete_media_clean(file_path: str = Form("")):
+    print("DELETE CLEAN FILE PATH =", file_path)
 
     if file_path and os.path.exists(file_path):
         os.remove(file_path)
-        print("FILE DELETED =", file_path)
+        print("DELETE CLEAN OK")
 
     return RedirectResponse("/admin/social/media-clean", status_code=303)
 # -------------------------------------------------
@@ -231,32 +231,63 @@ def get_file_path_from_public_url(public_url: str):
     return ""
 # -------------------------------------------------
 @app.get("/admin/social/media-clean", response_class=HTMLResponse)
-def admin_media_clean(request: Request):
-    media_items = []
+def admin_media_clean():
+    html = """
+    <html>
+    <head>
+        <meta charset="utf-8">
+        <title>Médias Clean</title>
+        <style>
+            body { font-family:Arial; background:#0f172a; color:white; padding:30px; }
+            .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:18px; }
+            .card { background:#111827; border:1px solid #334155; border-radius:16px; padding:16px; }
+            img, video { width:100%; max-height:180px; object-fit:cover; border-radius:12px; }
+            button { width:100%; margin-top:12px; padding:12px; border:0; border-radius:10px; background:#dc2626; color:white; font-weight:bold; cursor:pointer; }
+            a { color:#fde68a; }
+        </style>
+    </head>
+    <body>
+        <h1>Bibliothèque médias — Clean</h1>
+        <p><a href="/admin/social">← Retour dashboard</a></p>
+        <div class="grid">
+    """
 
     for filename in os.listdir(IMAGE_DIR):
         file_path = os.path.join(IMAGE_DIR, filename)
         if os.path.isfile(file_path):
-            media_items.append({
-                "filename": filename,
-                "media_type": "image",
-                "public_url": f"/media/images/{filename}",
-                "file_path": file_path,
-            })
+            url = "/media/images/" + filename.replace(" ", "%20")
+            html += f"""
+            <div class="card">
+                <img src="{url}">
+                <h3>{filename}</h3>
+                <form method="post" action="/admin/social/media/delete-clean">
+                    <input type="hidden" name="file_path" value="{file_path}">
+                    <button type="submit" onclick="return confirm('Supprimer ce média ?')">🗑 Supprimer</button>
+                </form>
+            </div>
+            """
 
     for filename in os.listdir(VIDEO_DIR):
         file_path = os.path.join(VIDEO_DIR, filename)
         if os.path.isfile(file_path):
-            media_items.append({
-                "filename": filename,
-                "media_type": "video",
-                "public_url": f"/media/videos/{filename}",
-                "file_path": file_path,
-            })
+            url = "/media/videos/" + filename.replace(" ", "%20")
+            html += f"""
+            <div class="card">
+                <video src="{url}" controls></video>
+                <h3>{filename}</h3>
+                <form method="post" action="/admin/social/media/delete-clean">
+                    <input type="hidden" name="file_path" value="{file_path}">
+                    <button type="submit" onclick="return confirm('Supprimer ce média ?')">🗑 Supprimer</button>
+                </form>
+            </div>
+            """
 
-    return templates.TemplateResponse(
-        "admin_media.html",
-        {"request": request, "media_items": media_items}
-    )
+    html += """
+        </div>
+    </body>
+    </html>
+    """
+
+    return html
 # -------------------------------------------------
 
