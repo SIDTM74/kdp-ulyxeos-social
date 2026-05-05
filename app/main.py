@@ -2,6 +2,7 @@ from fastapi import FastAPI
 import os
 import sqlite3
 import time
+import uuid
 from fastapi import UploadFile, File, Form, Request
 from fastapi.responses import RedirectResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
@@ -34,8 +35,9 @@ os.makedirs(VIDEO_DIR, exist_ok=True)
 os.makedirs(os.path.dirname(MEDIA_DB), exist_ok=True)
 
 # Exposition publique
-app.mount("/media/images", StaticFiles(directory=IMAGE_DIR), name="media_images")
-app.mount("/media/videos", StaticFiles(directory=VIDEO_DIR), name="media_videos")
+
+app.mount("/media/images", StaticFiles(directory=IMAGE_DIR), name="images")
+app.mount("/media/videos", StaticFiles(directory=VIDEO_DIR), name="videos")
 
 def init_media_db():
     conn = sqlite3.connect(MEDIA_DB)
@@ -156,56 +158,81 @@ def admin_social_media():
 
 @app.post("/admin/social/media/upload")
 async def upload_media(
-    media_type: str = Form(...),
-    file: UploadFile = File(...)
+    request: Request,
+    file: UploadFile = File(...),
+    media_type: str = Form(...)
 ):
+    # 🔒 Sécurité admin (si tu l'utilises)
+    try:
+        if not is_admin_authenticated(request):
+            return RedirectResponse("/admin/login", status_code=303)
+    except:
+        pass  # si tu n’as pas encore la fonction
+
+    # 📁 Dossiers
+    IMAGE_DIR = "/var/data/social/images"
+    VIDEO_DIR = "/var/data/social/videos"
+    MEDIA_DB = "/var/data/social/media.db"
+    BASE_URL = "https://kdp-ulyxeos-social.onrender.com"
+
+    os.makedirs(IMAGE_DIR, exist_ok=True)
+    os.makedirs(VIDEO_DIR, exist_ok=True)
+
+    # 📄 Nom fichier original + extension
     original_name = file.filename or "media"
     ext = os.path.splitext(original_name)[1].lower()
 
-    if media_type == "image":
-        if ext not in [".jpg", ".jpeg", ".png", ".webp"]:
-            return HTMLResponse("Format image non autorisé", status_code=400)
+    # ⚡ Nom automatique propre
+    timestamp = int(time.time())
+    unique_id = uuid.uuid4().hex[:8]
 
+    if media_type == "image":
+        filename = f"image_{timestamp}_{unique_id}{ext}"
+        folder = IMAGE_DIR
+        public_folder = "images"
+    elif media_type == "video":
+        filename = f"video_{timestamp}_{unique_id}{ext}"
+        folder = VIDEO_DIR
+        public_folder = "videos"
+    else:
+        filename = f"media_{timestamp}_{unique_id}{ext}"
         folder = IMAGE_DIR
         public_folder = "images"
 
-    elif media_type == "video":
-        if ext not in [".mp4", ".mov", ".webm"]:
-            return HTMLResponse("Format vidéo non autorisé", status_code=400)
-
-        folder = VIDEO_DIR
-        public_folder = "videos"
-
-    else:
-        return HTMLResponse("Type média invalide", status_code=400)
-
-    safe_name = original_name.replace(" ", "_").replace("'", "_").replace('"', "_")
-    filename = f"{int(time.time())}_{safe_name}"
     file_path = os.path.join(folder, filename)
 
-    with open(file_path, "wb") as f:
+    # 💾 Sauvegarde fichier
+    with open(file_path, "wb") as buffer:
         content = await file.read()
-        f.write(content)
+        buffer.write(content)
 
+    # 🌍 URL publique
     public_url = f"{BASE_URL}/media/{public_folder}/{filename}"
 
+    # 🗃️ Sauvegarde DB
     conn = sqlite3.connect(MEDIA_DB)
-    c = conn.cursor()
+    cur = conn.cursor()
 
-    c.execute("""
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS media (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            filename TEXT,
+            media_type TEXT,
+            public_url TEXT,
+            file_path TEXT,
+            created_at TEXT
+        )
+    """)
+
+    cur.execute("""
         INSERT INTO media (filename, media_type, public_url, file_path, created_at)
-        VALUES (?, ?, ?, ?, ?)
-    """, (
-        filename,
-        media_type,
-        public_url,
-        file_path,
-        time.strftime("%Y-%m-%d %H:%M:%S")
-    ))
+        VALUES (?, ?, ?, ?, datetime('now'))
+    """, (filename, media_type, public_url, file_path))
 
     conn.commit()
     conn.close()
 
+    # 🔁 Redirection
     return RedirectResponse("/admin/social/media", status_code=303)
 
 # xxx=============================================------
