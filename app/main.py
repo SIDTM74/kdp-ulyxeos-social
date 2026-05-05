@@ -260,12 +260,14 @@ def admin_media_clean():
             <div class="card">
                 <img src="{url}">
                 <h3>{filename}</h3>
-                <form method="post" action="/admin/social/media/delete-clean">
-                    <input type="hidden" name="file_path" value="{file_path}">
-                    <button type="submit" onclick="return confirm('Supprimer ce média ?')">🗑 Supprimer</button>
-                </form>
-            </div>
-            """
+            
+    <form method="post" action="/admin/social/media/delete-clean">
+        <Input type="hidden" name="file_path" value="{file_path}">
+            <button type="submit" onclick="return confirm('Supprimer ce média ?')">🗑 Supprimer</button>
+    </form>
+    
+   </div>
+   """
 
     for filename in os.listdir(VIDEO_DIR):
         file_path = os.path.join(VIDEO_DIR, filename)
