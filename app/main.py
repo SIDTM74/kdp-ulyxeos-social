@@ -94,7 +94,7 @@ def health():
 
 from urllib.parse import quote
 
-# @app.get("/admin/social/media", response_class=HTMLResponse)
+# @app.get("/admin/social/media", response_class=Response)
 # def admin_media_page(request: Request):
 #     media_items = []
 #     item_id = 1
@@ -132,7 +132,7 @@ from urllib.parse import quote
 #             item_id += 1
 # 
 #     return templates.TemplateResponse(
-#         "admin_media.html",
+#         "admin_media.",
 #         {
 #             "request": request,
 #             "media_items": media_items
@@ -303,6 +303,8 @@ def get_file_path_from_public_url(public_url: str):
 def admin_media_clean():
     html = """
     <html>
+    <link rel="icon" type="image/png" href="/static/favicon.png">
+    <link rel="apple-touch-icon" href="/static/favicon.png">
     <head>
         <link rel="icon" type="image/png" href="/static/favicon.png">
         <link rel="apple-touch-icon" href="/static/favicon.png">
