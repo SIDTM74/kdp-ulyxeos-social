@@ -91,9 +91,7 @@ CTA = [
 ]
 
 BONUS = [
-    "BONUS : Envie de tester ? Répondez simplement -Ulyxeos- en commentaire ! 
-    J'offre une analyse complète et gratuite aux 50 premiers. 
-    Tout ce que je vous demande en échange, c’est de partager ce post et de me donner votre avis honnête pour m'aider à perfectionner l'outil.",
+    "BONUS : Envie de tester ? Répondez simplement -Ulyxeos- en commentaire ! J'offre une analyse complète et gratuite aux 50 premiers. Tout ce que je vous demande en échange, c’est de partager ce post et de me donner votre avis honnête pour m'aider à perfectionner l'outil.",
 ]
 
 HASHTAGS = [
