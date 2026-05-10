@@ -16,6 +16,25 @@ HOOKS = [
     "Ton livre est en ligne… mais invisible ?",
     "Tu as publié ton livre… et maintenant ?",
     "Pourquoi ton livre ne se vend pas sur Amazon ?",
+    "Amazon n’est pas une bibliothèque, c'est un moteur de recherche. Traites-tu ton livre comme tel ?",
+    "Écrire un best-seller est un talent. Le vendre est une science.",
+    "Le 'Post and Pray' (publier et prier) n'est pas une stratégie marketing, c'est un billet de loterie.",
+    "Pourquoi 90 % des livres sur KDP ne dépassent jamais les 10 ventes ?",
+    "Ton livre est exceptionnel, mais l'algorithme d'Amazon n'a pas de cœur : il n'a que des données.",
+    "J’ai ouvert le capot d'Amazon KDP pour voir ce qui faisait vraiment vendre.",
+    "J'ai remplacé mes doutes d'auteur par des scripts Python. Voici le résultat.",
+    "Et si tu pouvais injecter de la donnée là où tu ne mettais que de l'intuition ?",
+    "J'ai automatisé la partie la plus ennuyeuse de KDP pour ne garder que le plaisir d'écrire.",
+    "Le marketing KDP n'est pas un art divin, c'est une structure. J'ai codé cette structure pour toi.",
+    "Tu as passé 6 mois à écrire. Vas-tu vraiment gâcher ce travail en 6 minutes à cause d'un mauvais SEO ?",
+    "Arrête de jeter ton budget pub par les fenêtres sur des mots-clés qui ne convertissent pas.",
+    "Ton manuscrit est prêt ? Félicitations. Maintenant, construisons son armure de vente.",
+    "La différence entre un auteur qui stagne et un auteur qui décolle ? La clarté de son lancement.",
+    "Invisible ou irrésistible : choisis ton camp sur Amazon.",
+    "KDP n'est pas une option, c'est une compétition.",
+    "Ton livre mérite une audience, pas seulement une étagère virtuelle.",
+    "L'écriture est ton job. Le marketing est celui d'Ulyxeos.",
+
 ]
 
 BENEFITS = [
@@ -25,6 +44,22 @@ BENEFITS = [
     "KDP ULYXEOS transforme ton manuscrit en base marketing exploitable.",
     "KDP ULYXEOS t’aide à trouver un angle plus clair pour vendre ton livre.",
     "KDP ULYXEOS t’aide à gagner du temps sur les mots-clés, le positionnement et la promotion.",
+    "KDP ULYXEOS automatise la corvée administrative pour te redonner du temps pour écrire.",
+    "Passe de l'upload de ton manuscrit à un dossier marketing complet en quelques secondes.",
+    "KDP ULYXEOS fait le travail de recherche à ta place : tu n'as plus qu'à publier.",
+    "Libère-toi des tableaux Excel et laisse l'algorithme d'Ulyxeos optimiser tes métadonnées.",
+    "KDP ULYXEOS transforme ton histoire en un argumentaire de vente irrésistible.",
+    "Trouve les mots exacts pour toucher le cœur de tes lecteurs et déclencher l'achat.",
+    "Ne devine plus ce que veulent tes lecteurs : KDP ULYXEOS décrypte leur psychologie d'achat pour toi.",
+    "Génère une description de livre optimisée qui convertit les curieux en acheteurs.",
+    "Passe d'un simple manuscrit à une stratégie de lancement digne d'une maison d'édition.",
+    "KDP ULYXEOS te donne l'avantage injuste pour dominer ta niche sur Amazon.",
+    "Identifie ton angle d'attaque marketing unique pour te démarquer de la concurrence.",
+    "Construis un univers visuel et stratégique cohérent autour de ton livre.",
+    "Élimine le stress du lancement grâce à une feuille de route claire et structurée.",
+    "KDP ULYXEOS est ton copilote intelligent dans la jungle d'Amazon KDP.",
+    "Ne te demande plus jamais 'par où commencer' : Ulyxeos te guide pas à pas.",
+    "Le pont entre ton talent d'écrivain et ton succès commercial.",
 ]
 
 CTA = [
@@ -36,12 +71,29 @@ CTA = [
     "Teste KDP ULYXEOS dès maintenant.",
     "Découvre ton potentiel de vente en quelques minutes.",
     "Passe à une vraie stratégie Amazon.",
+    "Réclame l'un des 50 accès privilège.",
+    "Sois parmi les premiers à automatiser ton succès KDP.",
+    "Profite de ton analyse offerte avant qu'il ne soit trop tard.",
+    "Rejoins les 50 auteurs qui publient plus intelligemment.",
+    "Génère ton dossier marketing complet en un clic.",
+    "Récupère 3 heures sur ton prochain lancement.",
+    "Automatise la corvée KDP et retourne à ton écriture.",
+    "Passe du manuscrit au plan d'action en moins de 2 minutes.",
+    "Donne à ton livre les armes pour dominer sa niche.",
+    "Découvre les mots-clés qui vont transformer ton classement Amazon.",
+    "Obtiens une stratégie de lancement digne d'une grande maison d'édition.",
+    "Arrête de deviner, commence à vendre avec une vraie stratégie.",
+    "Deviens bêta-testeur d'Ulyxeos et booste tes publications.",
+    "Teste l'outil, donne-moi ton avis, et garde tes résultats.",
+    "Aide-moi à construire le futur de l'auto-édition.",
+    "Essaye gratuitement : je ne veux que ton retour d'auteur.",
+
 ]
 
 BONUS = [
-    "Nouveau client sur pack 1 ou 5 crédits : 1 crédit offert.",
-    "Tout nouvel utilisateur qui achète un pack de 1 ou 5 crédits reçoit 1 crédit offert.",
-    "Offre de bienvenue : 1 crédit offert sur les packs 1 ou 5 crédits.",
+    "BONUS : Envie de tester ? Répondez simplement -Ulyxeos- en commentaire ! 
+    J'offre une analyse complète et gratuite aux 50 premiers. 
+    Tout ce que je vous demande en échange, c’est de partager ce post et de me donner votre avis honnête pour m'aider à perfectionner l'outil.",
 ]
 
 HASHTAGS = [
