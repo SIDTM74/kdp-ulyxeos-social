@@ -1,7 +1,7 @@
 import random
 import re
 
-SITE_URL = "https://kdp-ulyxeos.com"
+SITE_URL = "https://www.kdp-ulyxeos.com"
 
 HOOKS = [
     "Publier sur Amazon KDP ne suffit pas toujours à vendre.",
